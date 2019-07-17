@@ -1,5 +1,5 @@
 #votingpaper
-the rest services to vote
+The services to create and get the voting paper
 
 To build the application run the command inside the votingpaper folder
 ```
