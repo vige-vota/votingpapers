@@ -3,6 +3,7 @@ package it.vige.labs.gc.rest;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.vige.labs.gc.votingpapers.VotingPapers;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class VotingPaperController {
 
 	public final static VotingPapers votingPapers = new VotingPapers();

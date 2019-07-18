@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class ImagesTest {
 
-	Logger logger = LoggerFactory.getLogger(ImagesTest.class);
+	private Logger logger = LoggerFactory.getLogger(ImagesTest.class);
 
 	@Test
 	public void loadParties() throws IOException {

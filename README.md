@@ -11,9 +11,9 @@ Start the Java application with the following commands:
 ```
 to start a MongoDB instance. Then:
 ```
-java -jar build/libs/votingpaper-0.0.1-SNAPSHOT.jar --server.port=8543
+java -jar build/libs/votingpaper-1.0.0-SNAPSHOT.jar --server.port=8080
 ```
-and open `https://localhost:8543/swagger-ui.html` in your browser to connect to the vote application.
+and open `http://localhost:8080/swagger-ui.html` in your browser to connect to the vote application.
 
 If you need to start it on a environment production:
 ```
@@ -23,7 +23,7 @@ Before to start the HTTPS you need to create a keystore. You can use the followi
 ```
 keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore /${your_path}/keystore.p12 -validity 3650 -dname "CN=localhost, OU=Vige, O=Vige, L=Rome, S=Italy, C=IT" -storepass secret -keypass secret
 ```
-moving the ${your_path} variable to your preferred path where put the keystore
+moving the ${your_path} variable to your preferred path where put the keystore and open `https://localhost:8543/swagger-ui.html` in your browser to connect to the vote application.
 
 ## Eclipse
 

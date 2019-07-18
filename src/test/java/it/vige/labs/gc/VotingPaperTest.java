@@ -20,7 +20,7 @@ import it.vige.labs.gc.votingpapers.VotingPapers;
 @SpringBootTest
 public class VotingPaperTest {
 
-	Logger logger = LoggerFactory.getLogger(VotingPaperTest.class);
+	private Logger logger = LoggerFactory.getLogger(VotingPaperTest.class);
 
 	@Autowired
 	private VotingPaperController votingPaperController;
@@ -31,6 +31,7 @@ public class VotingPaperTest {
 		List<VotingPaper> list = votingPapers.getVotingPapers();
 		Assert.assertEquals("is admin", true, votingPapers.isAdmin());
 		Assert.assertEquals("size ok", 4, list.size());
+		logger.info(list + "");
 	}
 
 }
