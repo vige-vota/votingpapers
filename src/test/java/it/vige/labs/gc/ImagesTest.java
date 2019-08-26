@@ -22,7 +22,7 @@ public class ImagesTest {
 	public void loadParties() throws IOException {
 
 		BufferedInputStream forzaItalia = (BufferedInputStream) this.getClass()
-				.getResourceAsStream("/parties/forzaitalia.jpg");
+				.getResourceAsStream("/parties/pinetina.jpg");
 		logger.info("forzaitalia.jpg - " + new String(Base64.getEncoder().encodeToString(forzaItalia.readAllBytes())));
 		Assert.assertNotNull(forzaItalia);
 

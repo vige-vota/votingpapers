@@ -1,6 +1,8 @@
 package it.vige.labs.gc.votingpapers;
 
-public class Candidate extends Identifier {
+import it.vige.labs.gc.rest.Sex;
+
+public class Candidate extends Validation {
 
 	private String image;
 
@@ -20,6 +22,18 @@ public class Candidate extends Identifier {
 
 	public void setSex(char sex) {
 		this.sex = sex;
+	}
+
+	@Override
+	public boolean validate(VotingPapers remoteVotingPapers) {
+		boolean result = super.validate(remoteVotingPapers);
+		if (result && !name.trim().contains(" "))
+			result = false;
+		if (result && sex != Sex.M.asChar() && sex != Sex.F.asChar())
+			result = false;
+		if (result && image != null)
+			result = image.length() <= Validation.IMAGE_SIZE;
+		return result;
 	}
 
 }

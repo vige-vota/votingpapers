@@ -2,12 +2,12 @@ package it.vige.labs.gc.votingpapers;
 
 import java.util.List;
 
-public class Group extends Identifier {
+public class Group extends Validation {
 
 	private String image;
-	
+
 	private String subtitle;
-	
+
 	private List<Party> parties;
 
 	public String getImage() {
@@ -33,5 +33,15 @@ public class Group extends Identifier {
 	public void setSubtitle(String subtitle) {
 		this.subtitle = subtitle;
 	}
-	
+
+	@Override
+	public boolean validate(VotingPapers remoteVotingPapers) {
+		boolean result = super.validate(remoteVotingPapers);
+		if (result && parties != null)
+			result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers));
+		if (result && image != null)
+			result = image.length() <= Validation.IMAGE_SIZE;
+		return result;
+	}
+
 }

@@ -1,10 +1,10 @@
 package it.vige.labs.gc.votingpapers;
 
-public class Identifier {
+public abstract class Identifier {
 
-	private int id;
+	protected int id;
 
-	private String name;
+	protected String name;
 
 	public Identifier() {
 	}

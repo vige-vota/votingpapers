@@ -3,6 +3,7 @@ package it.vige.labs.gc.rest;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.votingpapers.VotingPapers;
 
 @RestController
@@ -19,14 +21,20 @@ public class VotingPaperController {
 
 	public final static VotingPapers votingPapers = new VotingPapers();
 
+	@Autowired
+	private Validator validator;
+
 	@GetMapping(value = "/votingPapers")
 	public VotingPapers getVotingPapers() {
 		return generateVotingPapers();
 	}
 
 	@PostMapping(value = "/votingPapers")
-	public void setVotingPapers(@RequestBody VotingPapers postVotingPapers) {
-		votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) {		
+		Messages messages = validator.validate(postVotingPapers);
+		if (messages.isOk())
+			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+		return messages;
 	}
 
 	public static VotingPapers generateVotingPapers() {

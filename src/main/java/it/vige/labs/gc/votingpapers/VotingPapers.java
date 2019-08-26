@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VotingPapers {
-	
+
 	private boolean admin;
 
 	private List<VotingPaper> votingPapers = new ArrayList<VotingPaper>();
@@ -23,5 +23,16 @@ public class VotingPapers {
 
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
+	}
+
+	public boolean validate(VotingPapers remoteVotingPapers) {
+		boolean result = false;
+		if (admin) {
+			if (remoteVotingPapers != null)
+				result = remoteVotingPapers.getVotingPapers().parallelStream()
+						.allMatch(votingPaper -> votingPaper.validate(remoteVotingPapers));
+			else result = true;
+		}
+		return result;
 	}
 }
