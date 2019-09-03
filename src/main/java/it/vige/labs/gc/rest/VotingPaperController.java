@@ -30,7 +30,7 @@ public class VotingPaperController {
 	}
 
 	@PostMapping(value = "/votingPapers")
-	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) {		
+	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) {
 		Messages messages = validator.validate(postVotingPapers);
 		if (messages.isOk())
 			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
