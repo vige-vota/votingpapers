@@ -154,11 +154,6 @@ public class VotingPaperTest {
 
 		candidate.setSex(Sex.F.asChar());
 		messages = votingPaperController.setVotingPapers(votingPapers);
-		Assert.assertFalse("the number of candidates must be < or = to the max candidates number of the voting paper",
-				messages.isOk());
-
-		votingPaper.setMaxCandidates(1);
-		messages = votingPaperController.setVotingPapers(votingPapers);
 		Assert.assertTrue("the id is ok", messages.isOk());
 
 		candidate.setImage(bigImage);
