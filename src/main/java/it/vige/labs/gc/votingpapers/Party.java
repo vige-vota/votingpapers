@@ -30,7 +30,7 @@ public class Party extends Validation {
 		if (result && candidates != null) {
 			result = candidates.parallelStream().allMatch(candidate -> candidate.validate(remoteVotingPapers));
 			VotingPaper remoteVotingPaper = findById(remoteVotingPapers);
-			if (remoteVotingPaper.getMaxCandidates() < candidates.size())
+			if (remoteVotingPaper.getMaxCandidates() > candidates.size())
 				result = false;
 		}
 		if (result && image != null)

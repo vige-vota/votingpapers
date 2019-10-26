@@ -12,14 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.vige.labs.gc.JavaAppApplication;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.votingpapers.VotingPapers;
+import it.vige.labs.gc.websocket.WebSocketClient;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class VotingPaperController {
 
 	public final static VotingPapers votingPapers = new VotingPapers();
+
+	@Autowired
+	private WebSocketClient webSocketClient;
 
 	@Autowired
 	private Validator validator;
@@ -30,10 +35,12 @@ public class VotingPaperController {
 	}
 
 	@PostMapping(value = "/votingPapers")
-	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) {
+	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
 		Messages messages = validator.validate(postVotingPapers);
-		if (messages.isOk())
+		if (messages.isOk()) {
 			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+			webSocketClient.getStompSession().send(JavaAppApplication.TOPIC_NAME, votingPapers);
+		}
 		return messages;
 	}
 

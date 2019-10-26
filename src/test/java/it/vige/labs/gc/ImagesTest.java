@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import it.vige.labs.gc.votingpapers.Validation;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ImagesTest {
@@ -22,137 +24,167 @@ public class ImagesTest {
 	public void loadParties() throws IOException {
 
 		BufferedInputStream forzaItalia = (BufferedInputStream) this.getClass()
-				.getResourceAsStream("/parties/pinetina.jpg");
-		logger.info("forzaitalia.jpg - " + new String(Base64.getEncoder().encodeToString(forzaItalia.readAllBytes())));
-		Assert.assertNotNull(forzaItalia);
+				.getResourceAsStream("/parties/forzaitalia.jpg");
+		String forzaItaliaStr = new String(Base64.getEncoder().encodeToString(forzaItalia.readAllBytes()));
+		logger.info("forzaitalia.jpg - " + forzaItaliaStr);
+		Assert.assertTrue(forzaItaliaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream pd = (BufferedInputStream) this.getClass().getResourceAsStream("/parties/pd.jpg");
-		logger.info("pd.jpg - " + new String(Base64.getEncoder().encodeToString(pd.readAllBytes())));
-		Assert.assertNotNull(pd);
+		String pdStr = new String(Base64.getEncoder().encodeToString(pd.readAllBytes()));
+		logger.info("pd.jpg - " + pdStr);
+		Assert.assertTrue(pdStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream movimento5Stelle = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/movimento5stelle.jpg");
-		logger.info("movimento5stelle.jpg - " + new String(Base64.getEncoder().encodeToString(movimento5Stelle.readAllBytes())));
-		Assert.assertNotNull(movimento5Stelle);
+		String movimento5StelleStr = new String(Base64.getEncoder().encodeToString(movimento5Stelle.readAllBytes()));
+		logger.info("movimento5stelle.jpg - " + movimento5StelleStr);
+		Assert.assertTrue(movimento5StelleStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream lega = (BufferedInputStream) this.getClass().getResourceAsStream("/parties/lega.jpg");
-		logger.info("lega.jpg - " + new String(Base64.getEncoder().encodeToString(lega.readAllBytes())));
-		Assert.assertNotNull(lega);
+		String legaStr = new String(Base64.getEncoder().encodeToString(lega.readAllBytes()));
+		logger.info("lega.jpg - " + legaStr);
+		Assert.assertTrue(legaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream fratellidItalia = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/fratelliditalia.jpg");
-		logger.info("fratelliditalia.jpg - " + new String(Base64.getEncoder().encodeToString(fratellidItalia.readAllBytes())));
-		Assert.assertNotNull(fratellidItalia);
+		String fratellidItaliaStr = new String(Base64.getEncoder().encodeToString(fratellidItalia.readAllBytes()));
+		logger.info("fratelliditalia.jpg - " + fratellidItaliaStr);
+		Assert.assertTrue(fratellidItaliaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream autonomistiPopolari = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/autonomistipopolari.jpg");
-		logger.info("autonomistipopolari.jpg - " + new String(Base64.getEncoder().encodeToString(autonomistiPopolari.readAllBytes())));
-		Assert.assertNotNull(autonomistiPopolari);
+		String autonomistiPopolariStr = new String(
+				Base64.getEncoder().encodeToString(autonomistiPopolari.readAllBytes()));
+		logger.info("autonomistipopolari.jpg - " + autonomistiPopolariStr);
+		Assert.assertTrue(autonomistiPopolariStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream cercasiPartito = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/cercasipartito.jpg");
-		logger.info("cercasipartito.jpg - " + new String(Base64.getEncoder().encodeToString(cercasiPartito.readAllBytes())));
-		Assert.assertNotNull(cercasiPartito);
+		String cercasiPartitoStr = new String(Base64.getEncoder().encodeToString(cercasiPartito.readAllBytes()));
+		logger.info("cercasipartito.jpg - " + cercasiPartitoStr);
+		Assert.assertTrue(cercasiPartitoStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream futura2018 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/futura2018.jpg");
-		logger.info("futura2018.jpg - " + new String(Base64.getEncoder().encodeToString(futura2018.readAllBytes())));
-		Assert.assertNotNull(futura2018);
+		String futura2018Str = new String(Base64.getEncoder().encodeToString(futura2018.readAllBytes()));
+		logger.info("futura2018.jpg - " + futura2018Str);
+		Assert.assertTrue(futura2018Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream laltraEuropa = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/laltraeuropa.jpg");
-		logger.info("laltraeuropa.jpg - " + new String(Base64.getEncoder().encodeToString(laltraEuropa.readAllBytes())));
-		Assert.assertNotNull(laltraEuropa);
+		String laltraEuropaStr = new String(Base64.getEncoder().encodeToString(laltraEuropa.readAllBytes()));
+		logger.info("laltraeuropa.jpg - " + laltraEuropaStr);
+		Assert.assertTrue(laltraEuropaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream legaNord = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/leganord.jpg");
-		logger.info("leganord.jpg - " + new String(Base64.getEncoder().encodeToString(legaNord.readAllBytes())));
-		Assert.assertNotNull(legaNord);
+		String legaNordStr = new String(Base64.getEncoder().encodeToString(legaNord.readAllBytes()));
+		logger.info("leganord.jpg - " + legaNordStr);
+		Assert.assertTrue(legaNordStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream partitoSocialista = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/partitosocialista.jpg");
-		logger.info("partitosocialista.jpg - " + new String(Base64.getEncoder().encodeToString(partitoSocialista.readAllBytes())));
-		Assert.assertNotNull(partitoSocialista);
+		String partitoSocialistaStr = new String(Base64.getEncoder().encodeToString(partitoSocialista.readAllBytes()));
+		logger.info("partitosocialista.jpg - " + partitoSocialistaStr);
+		Assert.assertTrue(partitoSocialistaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream partitoRadicale = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/partitoradicale.jpg");
-		logger.info("partitoradicale.jpg - " + new String(Base64.getEncoder().encodeToString(partitoRadicale.readAllBytes())));
-		Assert.assertNotNull(partitoRadicale);
+		String partitoRadicaleStr = new String(Base64.getEncoder().encodeToString(partitoRadicale.readAllBytes()));
+		logger.info("partitoradicale.jpg - " + partitoRadicaleStr);
+		Assert.assertTrue(partitoRadicaleStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream sceltaEuropea = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/sceltaeuropea.jpg");
-		logger.info("sceltaeuropea.jpg - " + new String(Base64.getEncoder().encodeToString(sceltaEuropea.readAllBytes())));
-		Assert.assertNotNull(sceltaEuropea);
+		String sceltaEuropeaStr = new String(Base64.getEncoder().encodeToString(sceltaEuropea.readAllBytes()));
+		logger.info("sceltaeuropea.jpg - " + sceltaEuropeaStr);
+		Assert.assertTrue(sceltaEuropeaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream casapound = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/casapound.jpg");
-		logger.info("casapound.jpg - " + new String(Base64.getEncoder().encodeToString(casapound.readAllBytes())));
-		Assert.assertNotNull(casapound);
+		String casapoundStr = new String(Base64.getEncoder().encodeToString(casapound.readAllBytes()));
+		logger.info("casapound.jpg - " + casapoundStr);
+		Assert.assertTrue(casapoundStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream sinistraELiberta = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/sinistraeliberta.jpg");
-		logger.info("sinistraeliberta.jpg - " + new String(Base64.getEncoder().encodeToString(sinistraELiberta.readAllBytes())));
-		Assert.assertNotNull(sinistraELiberta);
+		String sinistraELibertaStr = new String(Base64.getEncoder().encodeToString(sinistraELiberta.readAllBytes()));
+		logger.info("sinistraeliberta.jpg - " + sinistraELibertaStr);
+		Assert.assertTrue(sinistraELibertaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream liberiEUguali = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/liberieuguali.jpg");
-		logger.info("liberieuguali.jpg - " + new String(Base64.getEncoder().encodeToString(liberiEUguali.readAllBytes())));
-		Assert.assertNotNull(liberiEUguali);
+		String liberiEUgualiStr = new String(Base64.getEncoder().encodeToString(liberiEUguali.readAllBytes()));
+		logger.info("liberieuguali.jpg - " + liberiEUgualiStr);
+		Assert.assertTrue(liberiEUgualiStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream forzaRoma = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/forzaroma.jpg");
-		logger.info("forzaroma.jpg - " + new String(Base64.getEncoder().encodeToString(forzaRoma.readAllBytes())));
-		Assert.assertNotNull(forzaRoma);
+		String forzaRomaStr = new String(Base64.getEncoder().encodeToString(forzaRoma.readAllBytes()));
+		logger.info("forzaroma.jpg - " + forzaRomaStr);
+		Assert.assertTrue(forzaRomaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream forzaLazio = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/forzalazio.jpg");
-		logger.info("forzalazio.jpg - " + new String(Base64.getEncoder().encodeToString(forzaLazio.readAllBytes())));
-		Assert.assertNotNull(forzaLazio);
+		String forzaLazioStr = new String(Base64.getEncoder().encodeToString(forzaLazio.readAllBytes()));
+		logger.info("forzalazio.jpg - " + forzaLazioStr);
+		Assert.assertTrue(forzaLazioStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream piuEuropa = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/+europa.jpg");
-		logger.info("+europa.jpg - " + new String(Base64.getEncoder().encodeToString(piuEuropa.readAllBytes())));
-		Assert.assertNotNull(piuEuropa);
+		String piuEuropaStr = new String(Base64.getEncoder().encodeToString(piuEuropa.readAllBytes()));
+		logger.info("+europa.jpg - " + piuEuropaStr);
+		Assert.assertTrue(piuEuropaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream europaVerde = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/europaverde.jpg");
-		logger.info("europaverde.jpg - " + new String(Base64.getEncoder().encodeToString(europaVerde.readAllBytes())));
-		Assert.assertNotNull(europaVerde);
+		String europaVerdeStr = new String(Base64.getEncoder().encodeToString(europaVerde.readAllBytes()));
+		logger.info("europaverde.jpg - " + europaVerdeStr);
+		Assert.assertTrue(europaVerdeStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream laSinistra = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/lasinistra.jpg");
-		logger.info("lasinistra.jpg - " + new String(Base64.getEncoder().encodeToString(laSinistra.readAllBytes())));
-		Assert.assertNotNull(laSinistra);
+		String laSinistraStr = new String(Base64.getEncoder().encodeToString(laSinistra.readAllBytes()));
+		logger.info("lasinistra.jpg - " + laSinistraStr);
+		Assert.assertTrue(laSinistraStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream forzaNuova = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/forzanuova.jpg");
-		logger.info("forzanuova.jpg - " + new String(Base64.getEncoder().encodeToString(forzaNuova.readAllBytes())));
-		Assert.assertNotNull(forzaNuova);
+		String forzaNuovaStr = new String(Base64.getEncoder().encodeToString(forzaNuova.readAllBytes()));
+		logger.info("forzanuova.jpg - " + forzaNuovaStr);
+		Assert.assertTrue(forzaNuovaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream partitoAnimalista = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/partitoanimalista.jpg");
-		logger.info("partitoanimalista.jpg - " + new String(Base64.getEncoder().encodeToString(partitoAnimalista.readAllBytes())));
-		Assert.assertNotNull(partitoAnimalista);
+		String partitoAnimalistaStr = new String(Base64.getEncoder().encodeToString(partitoAnimalista.readAllBytes()));
+		logger.info("partitoanimalista.jpg - " + partitoAnimalistaStr);
+		Assert.assertTrue(partitoAnimalistaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream partitoComunista = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/partitocomunista.jpg");
-		logger.info("partitocomunista.jpg - " + new String(Base64.getEncoder().encodeToString(partitoComunista.readAllBytes())));
-		Assert.assertNotNull(partitoComunista);
+		String partitoComunistaStr = new String(Base64.getEncoder().encodeToString(partitoComunista.readAllBytes()));
+		logger.info("partitocomunista.jpg - " + partitoComunistaStr);
+		Assert.assertTrue(partitoComunistaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream partitoPirata = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/partitopirata.jpg");
-		logger.info("partitopirata.jpg - " + new String(Base64.getEncoder().encodeToString(partitoPirata.readAllBytes())));
-		Assert.assertNotNull(partitoPirata);
+		String partitoPirataStr = new String(Base64.getEncoder().encodeToString(partitoPirata.readAllBytes()));
+		logger.info("partitopirata.jpg - " + partitoPirataStr);
+		Assert.assertTrue(partitoPirataStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream popoloDellaFamiglia = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/popolodellafamiglia.jpg");
-		logger.info("popolodellafamiglia.jpg - " + new String(Base64.getEncoder().encodeToString(popoloDellaFamiglia.readAllBytes())));
-		Assert.assertNotNull(popoloDellaFamiglia);
+		String popoloDellaFamigliaStr = new String(
+				Base64.getEncoder().encodeToString(popoloDellaFamiglia.readAllBytes()));
+		logger.info("popolodellafamiglia.jpg - " + popoloDellaFamigliaStr);
+		Assert.assertTrue(popoloDellaFamigliaStr.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream popolariPerLItalia = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/parties/popolariperlitalia.jpg");
-		logger.info("popolariperlitalia.jpg - " + new String(Base64.getEncoder().encodeToString(popolariPerLItalia.readAllBytes())));
-		Assert.assertNotNull(popolariPerLItalia);
+		String popolariPerLItaliaStr = new String(
+				Base64.getEncoder().encodeToString(popolariPerLItalia.readAllBytes()));
+		logger.info("popolariperlitalia.jpg - " + popolariPerLItaliaStr);
+		Assert.assertTrue(popolariPerLItaliaStr.length() <= Validation.IMAGE_SIZE);
 	}
 
 	@Test
@@ -160,118 +192,141 @@ public class ImagesTest {
 
 		BufferedInputStream candidate1 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate1.jpg");
-		logger.info("candidate1.jpg - " + new String(Base64.getEncoder().encodeToString(candidate1.readAllBytes())));
-		Assert.assertNotNull(candidate1);
+		String candidate1Str = new String(Base64.getEncoder().encodeToString(candidate1.readAllBytes()));
+		logger.info("candidate1.jpg - " + candidate1Str);
+		Assert.assertTrue(candidate1Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate2 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate2.jpg");
-		logger.info("candidate2.jpg - " + new String(Base64.getEncoder().encodeToString(candidate2.readAllBytes())));
-		Assert.assertNotNull(candidate2);
+		String candidate2Str = new String(Base64.getEncoder().encodeToString(candidate2.readAllBytes()));
+		logger.info("candidate2.jpg - " + candidate2Str);
+		Assert.assertTrue(candidate2Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate3 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate3.jpg");
-		logger.info("candidate3.jpg - " + new String(Base64.getEncoder().encodeToString(candidate3.readAllBytes())));
-		Assert.assertNotNull(candidate3);
+		String candidate3Str = new String(Base64.getEncoder().encodeToString(candidate3.readAllBytes()));
+		logger.info("candidate3.jpg - " + candidate3Str);
+		Assert.assertTrue(candidate3Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate4 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate4.jpg");
-		logger.info("candidate4.jpg - " + new String(Base64.getEncoder().encodeToString(candidate4.readAllBytes())));
-		Assert.assertNotNull(candidate4);
+		String candidate4Str = new String(Base64.getEncoder().encodeToString(candidate4.readAllBytes()));
+		logger.info("candidate4.jpg - " + candidate4Str);
+		Assert.assertTrue(candidate4Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate5 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate5.jpg");
-		logger.info("candidate5.jpg - " + new String(Base64.getEncoder().encodeToString(candidate5.readAllBytes())));
-		Assert.assertNotNull(candidate5);
+		String candidate5Str = new String(Base64.getEncoder().encodeToString(candidate5.readAllBytes()));
+		logger.info("candidate5.jpg - " + candidate5Str);
+		Assert.assertTrue(candidate5Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate6 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate6.jpg");
-		logger.info("candidate6.jpg - " + new String(Base64.getEncoder().encodeToString(candidate6.readAllBytes())));
-		Assert.assertNotNull(candidate6);
+		String candidate6Str = new String(Base64.getEncoder().encodeToString(candidate6.readAllBytes()));
+		logger.info("candidate6.jpg - " + candidate6Str);
+		Assert.assertTrue(candidate6Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate7 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate7.jpg");
-		logger.info("candidate7.jpg - " + new String(Base64.getEncoder().encodeToString(candidate7.readAllBytes())));
-		Assert.assertNotNull(candidate7);
+		String candidate7Str = new String(Base64.getEncoder().encodeToString(candidate7.readAllBytes()));
+		logger.info("candidate7.jpg - " + candidate7Str);
+		Assert.assertTrue(candidate7Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate8 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate8.jpg");
-		logger.info("candidate8.jpg - " + new String(Base64.getEncoder().encodeToString(candidate8.readAllBytes())));
-		Assert.assertNotNull(candidate8);
+		String candidate8Str = new String(Base64.getEncoder().encodeToString(candidate8.readAllBytes()));
+		logger.info("candidate8.jpg - " + candidate8Str);
+		Assert.assertTrue(candidate8Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate9 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate9.jpg");
-		logger.info("candidate9.jpg - " + new String(Base64.getEncoder().encodeToString(candidate9.readAllBytes())));
-		Assert.assertNotNull(candidate9);
+		String candidate9Str = new String(Base64.getEncoder().encodeToString(candidate9.readAllBytes()));
+		logger.info("candidate9.jpg - " + candidate9Str);
+		Assert.assertTrue(candidate9Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate10 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate10.jpg");
-		logger.info("candidate10.jpg - " + new String(Base64.getEncoder().encodeToString(candidate10.readAllBytes())));
-		Assert.assertNotNull(candidate10);
+		String candidate10Str = new String(Base64.getEncoder().encodeToString(candidate10.readAllBytes()));
+		logger.info("candidate10.jpg - " + candidate10Str);
+		Assert.assertTrue(candidate10Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate11 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate11.jpg");
-		logger.info("candidate11.jpg - " + new String(Base64.getEncoder().encodeToString(candidate11.readAllBytes())));
-		Assert.assertNotNull(candidate11);
+		String candidate11Str = new String(Base64.getEncoder().encodeToString(candidate11.readAllBytes()));
+		logger.info("candidate11.jpg - " + candidate11Str);
+		Assert.assertTrue(candidate11Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate12 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate12.jpg");
-		logger.info("candidate12.jpg - " + new String(Base64.getEncoder().encodeToString(candidate12.readAllBytes())));
-		Assert.assertNotNull(candidate12);
+		String candidate12Str = new String(Base64.getEncoder().encodeToString(candidate12.readAllBytes()));
+		logger.info("candidate12.jpg - " + candidate12Str);
+		Assert.assertTrue(candidate12Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate13 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate13.jpg");
-		logger.info("candidate13.jpg - " + new String(Base64.getEncoder().encodeToString(candidate13.readAllBytes())));
-		Assert.assertNotNull(candidate13);
+		String candidate13Str = new String(Base64.getEncoder().encodeToString(candidate13.readAllBytes()));
+		logger.info("candidate13.jpg - " + candidate13Str);
+		Assert.assertTrue(candidate13Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate14 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate14.jpg");
-		logger.info("candidate14.jpg - " + new String(Base64.getEncoder().encodeToString(candidate14.readAllBytes())));
-		Assert.assertNotNull(candidate14);
+		String candidate14Str = new String(Base64.getEncoder().encodeToString(candidate14.readAllBytes()));
+		logger.info("candidate14.jpg - " + candidate14Str);
+		Assert.assertTrue(candidate14Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate15 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate15.jpg");
-		logger.info("candidate15.jpg - " + new String(Base64.getEncoder().encodeToString(candidate15.readAllBytes())));
-		Assert.assertNotNull(candidate15);
+		String candidate15Str = new String(Base64.getEncoder().encodeToString(candidate15.readAllBytes()));
+		logger.info("candidate15.jpg - " + candidate15Str);
+		Assert.assertTrue(candidate15Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate16 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate16.jpg");
-		logger.info("candidate16.jpg - " + new String(Base64.getEncoder().encodeToString(candidate16.readAllBytes())));
-		Assert.assertNotNull(candidate16);
+		String candidate16Str = new String(Base64.getEncoder().encodeToString(candidate16.readAllBytes()));
+		logger.info("candidate16.jpg - " + candidate16Str);
+		Assert.assertTrue(candidate16Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate17 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate17.jpg");
-		logger.info("candidate17.jpg - " + new String(Base64.getEncoder().encodeToString(candidate17.readAllBytes())));
-		Assert.assertNotNull(candidate17);
+		String candidate17Str = new String(Base64.getEncoder().encodeToString(candidate17.readAllBytes()));
+		logger.info("candidate17.jpg - " + candidate17Str);
+		Assert.assertTrue(candidate17Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate18 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate18.jpg");
-		logger.info("candidate18.jpg - " + new String(Base64.getEncoder().encodeToString(candidate18.readAllBytes())));
-		Assert.assertNotNull(candidate18);
+		String candidate18Str = new String(Base64.getEncoder().encodeToString(candidate18.readAllBytes()));
+		logger.info("candidate18.jpg - " + candidate18Str);
+		Assert.assertTrue(candidate18Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate19 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate19.jpg");
-		logger.info("candidate19.jpg - " + new String(Base64.getEncoder().encodeToString(candidate19.readAllBytes())));
-		Assert.assertNotNull(candidate19);
+		String candidate19Str = new String(Base64.getEncoder().encodeToString(candidate19.readAllBytes()));
+		logger.info("candidate19.jpg - " + candidate19Str);
+		Assert.assertTrue(candidate19Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate20 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate20.jpg");
-		logger.info("candidate20.jpg - " + new String(Base64.getEncoder().encodeToString(candidate20.readAllBytes())));
-		Assert.assertNotNull(candidate20);
+		String candidate20Str = new String(Base64.getEncoder().encodeToString(candidate20.readAllBytes()));
+		logger.info("candidate20.jpg - " + candidate20Str);
+		Assert.assertTrue(candidate20Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate21 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate21.jpg");
-		logger.info("candidate21.jpg - " + new String(Base64.getEncoder().encodeToString(candidate21.readAllBytes())));
-		Assert.assertNotNull(candidate21);
+		String candidate21Str = new String(Base64.getEncoder().encodeToString(candidate21.readAllBytes()));
+		logger.info("candidate21.jpg - " + candidate21Str);
+		Assert.assertTrue(candidate21Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate22 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate22.jpg");
-		logger.info("candidate22.jpg - " + new String(Base64.getEncoder().encodeToString(candidate22.readAllBytes())));
-		Assert.assertNotNull(candidate22);
+		String candidate22Str = new String(Base64.getEncoder().encodeToString(candidate22.readAllBytes()));
+		logger.info("candidate22.jpg - " + candidate22Str);
+		Assert.assertTrue(candidate22Str.length() <= Validation.IMAGE_SIZE);
 
 		BufferedInputStream candidate23 = (BufferedInputStream) this.getClass()
 				.getResourceAsStream("/candidates/candidate23.jpg");
-		logger.info("candidate23.jpg - " + new String(Base64.getEncoder().encodeToString(candidate23.readAllBytes())));
-		Assert.assertNotNull(candidate23);
+		String candidate23Str = new String(Base64.getEncoder().encodeToString(candidate23.readAllBytes()));
+		logger.info("candidate23.jpg - " + candidate23Str);
+		Assert.assertTrue(candidate23Str.length() <= Validation.IMAGE_SIZE);
 	}
 
 }

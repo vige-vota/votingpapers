@@ -1,7 +1,6 @@
 package it.vige.labs.gc;
 
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -14,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import it.vige.labs.gc.messages.Messages;
@@ -28,7 +28,7 @@ import it.vige.labs.gc.votingpapers.VotingPaper;
 import it.vige.labs.gc.votingpapers.VotingPapers;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class VotingPaperTest {
 
 	private Logger logger = LoggerFactory.getLogger(VotingPaperTest.class);
@@ -40,7 +40,7 @@ public class VotingPaperTest {
 	private VotingPaperController votingPaperController;
 
 	@Test
-	public void votingPaper() throws IOException {
+	public void votingPaper() throws Exception {
 		VotingPapers votingPapers = votingPaperController.getVotingPapers();
 		List<VotingPaper> list = votingPapers.getVotingPapers();
 		Assert.assertEquals("is admin", true, votingPapers.isAdmin());
@@ -154,7 +154,8 @@ public class VotingPaperTest {
 
 		candidate.setSex(Sex.F.asChar());
 		messages = votingPaperController.setVotingPapers(votingPapers);
-		Assert.assertFalse("the number of candidates must be < or = to the max candidates number of the voting paper", messages.isOk());
+		Assert.assertFalse("the number of candidates must be < or = to the max candidates number of the voting paper",
+				messages.isOk());
 
 		votingPaper.setMaxCandidates(1);
 		messages = votingPaperController.setVotingPapers(votingPapers);
