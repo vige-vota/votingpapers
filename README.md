@@ -7,13 +7,17 @@ To build the application run the command inside the votingpapers folder
 ```
 Start the Java application with the following commands:
 ```
+java -jar build/libs/votingpapers-1.0.0-SNAPSHOT.jar --server.port=8180 --spring.profiles.active=dev
+```
+or simply:
+```
 java -jar build/libs/votingpapers-1.0.0-SNAPSHOT.jar --server.port=8180
 ```
 and open `http://localhost:8180/swagger-ui.html` in your browser to connect to the vote application.
 
 If you need to start it on a environment production:
 ```
-java -jar build/libs/votingpapers-1.0.0-SNAPSHOT.jar --server.port=8543 --server.ssl.key-store=/${your_path}/keystore.p12 --server.ssl.key-store-password=secret --server.ssl.keyStoreType=PKCS12 --server.ssl.keyAlias=tomcat
+java -jar build/libs/votingpapers-1.0.0-SNAPSHOT.jar --server.port=8543 --server.ssl.key-store=/${your_path}/keystore.p12 --server.ssl.key-store-password=secret --server.ssl.keyStoreType=PKCS12 --server.ssl.keyAlias=tomcat --spring.profiles.active=prod
 ```
 Before to start the HTTPS you need to create a keystore. You can use the following sample:
 ```

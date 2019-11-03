@@ -1,9 +1,11 @@
 package it.vige.labs.gc.rest;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +31,13 @@ public class VotingPaperController {
 	@Autowired
 	private Validator validator;
 
+	@Autowired
+	private Environment environment;
+
 	@GetMapping(value = "/votingPapers")
 	public VotingPapers getVotingPapers() {
-		return generateVotingPapers();
+		String[] profiles = environment.getActiveProfiles();
+		return generateVotingPapers(profiles);
 	}
 
 	@PostMapping(value = "/votingPapers")
@@ -44,18 +50,20 @@ public class VotingPaperController {
 		return messages;
 	}
 
-	public static VotingPapers generateVotingPapers() {
+	public static VotingPapers generateVotingPapers(String[] profiles) {
 		if (votingPapers.getVotingPapers().size() == 0) {
-			InputStream jsonStream = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream("mock/config-app.json");
-			ObjectMapper objectMapper = new ObjectMapper();
-			try {
-				VotingPapers votingPapersFromJson = objectMapper.readValue(jsonStream, VotingPapers.class);
-				votingPapers.setVotingPapers(votingPapersFromJson.getVotingPapers());
-				votingPapers.setAdmin(votingPapersFromJson.isAdmin());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			if (profiles.length == 0 || profiles[0].equals("dev")) {
+				ObjectMapper objectMapper = new ObjectMapper();
+				try {
+					InputStream jsonStream = new FileInputStream("src/test/resources/mock/config-app.json");
+					VotingPapers votingPapersFromJson = objectMapper.readValue(jsonStream, VotingPapers.class);
+					votingPapers.setVotingPapers(votingPapersFromJson.getVotingPapers());
+					votingPapers.setAdmin(votingPapersFromJson.isAdmin());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else
+				votingPapers.setAdmin(true);
 		}
 		return votingPapers;
 	}

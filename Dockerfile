@@ -34,5 +34,5 @@ RUN rm -Rf /home/votinguser/.gradle && \
 	rm -Rf /workspace/vota && \
     keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore /workspace/keystore.p12 -validity 3650 -dname "CN=vota-votingpapers.vige.it, OU=Vige, O=Vige, L=Rome, S=Italy, C=IT" -storepass secret -keypass secret
 
-CMD java -jar /workspace/vota.jar --server.port=8543 --server.ssl.key-store=/workspace/keystore.p12 --server.ssl.key-store-password=secret --server.ssl.keyStoreType=PKCS12 --server.ssl.keyAlias=tomcat && \
+CMD java -jar /workspace/vota.jar --server.port=8543 --server.ssl.key-store=/workspace/keystore.p12 --server.ssl.key-store-password=secret --server.ssl.keyStoreType=PKCS12 --server.ssl.keyAlias=tomcat --spring.profiles.active=prod && \
 	tail -f /dev/null
