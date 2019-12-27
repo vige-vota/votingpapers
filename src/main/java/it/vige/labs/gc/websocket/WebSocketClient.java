@@ -20,11 +20,19 @@ public class WebSocketClient {
 	@Value("${server.port}")
 	private int serverPort;
 
+	@Value("${websocket.scheme}")
+	private String websocketScheme;
+
+	@Value("${votingpapers.host}")
+	private String votingpapersHost;
+
 	private void connect() throws Exception {
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-		stompSession = stompClient.connect("ws://localhost:" + serverPort + JavaAppApplication.BROKER_NAME,
-				new StompSessionHandlerAdapter() {
-				}).get();
+		stompSession = stompClient
+				.connect(websocketScheme + "://" + votingpapersHost + ":" + serverPort + JavaAppApplication.BROKER_NAME,
+						new StompSessionHandlerAdapter() {
+						})
+				.get();
 	}
 
 	public StompSession getStompSession() throws Exception {

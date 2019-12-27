@@ -9,10 +9,6 @@ Start the Java application with the following commands:
 ```
 java -jar build/libs/votingpapers-1.0.0-SNAPSHOT.jar --server.port=8180 --spring.profiles.active=dev
 ```
-or simply:
-```
-java -jar build/libs/votingpapers-1.0.0-SNAPSHOT.jar --server.port=8180
-```
 and open http://localhost:8180/swagger-ui.html in your browser to connect to the vote application.
 
 If you need to start it on a environment production:
