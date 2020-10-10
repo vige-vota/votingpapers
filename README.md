@@ -9,7 +9,7 @@ Start the Java application with the following commands:
 ```
 java -jar build/libs/votingpapers-1.0.0-SNAPSHOT.jar --server.port=8180 --spring.profiles.active=dev
 ```
-and open http://localhost:8180/swagger-ui.html in your browser to connect to the vote application.
+and open http://localhost:8180/swagger-ui/index.html in your browser to connect to the vote application.
 
 If you need to start it on a environment production:
 ```
@@ -38,4 +38,4 @@ To run the image use the command:
 ```
 docker run -d --name vota-votingpapers -p8543:8543 vige/vota-votingpapers
 ```
-Then open https://vota-votingpapers.vige.it:8543/swagger-ui.html to connect to the vote application
+Then open https://vota-votingpapers.vige.it:8543/swagger-ui/index.html to connect to the vote application
