@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import it.vige.labs.gc.messages.Messages;
@@ -29,6 +30,7 @@ import it.vige.labs.gc.votingpapers.VotingPapers;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("dev")
 public class VotingPaperTest {
 
 	private Logger logger = LoggerFactory.getLogger(VotingPaperTest.class);
