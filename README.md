@@ -17,6 +17,17 @@ java -Djavax.net.ssl.trustStore=./application.keystore -Djavax.net.ssl.trustStor
 ```
 and open https://vota-votingpapers.vige.it:8543/swagger-ui/index.html in your browser to connect to the vote application.
 
+## certificates
+
+in a production environment you could move a different ssl certificate and keys. Use this command to generate it:
+```
+keytool -genkey -alias votingpapers -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore ./application.keystore -validity 3650 -dname "CN=vota-votingpapers.vige.it, OU=Vige, O=Vige, L=Rome, S=Italy, C=IT" -storepass password -keypass password
+```
+You need to export the auth certificate and import it through the command:
+```
+keytool -import -alias auth -file ${exported_auth_certificate}.pem -keystore ./application.keystore -storepass password -keypass password
+```
+
 ## Eclipse
 
 To make the project as an Eclipse project go in the root folder of the project and run the following command:
