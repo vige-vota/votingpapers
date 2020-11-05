@@ -19,7 +19,7 @@ and open https://vota-votingpapers.vige.it:8543/swagger-ui/index.html in your br
 
 ## certificates
 
-in a production environment you could move a different ssl certificate and keys. Use this command to generate it:
+in a production environment we are using a default certificate but you could move a different ssl certificate and keys. Use this command to generate it:
 ```
 keytool -genkey -alias votingpapers -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore ./application.keystore -validity 3650 -dname "CN=vota-votingpapers.vige.it, OU=Vige, O=Vige, L=Rome, S=Italy, C=IT" -storepass password -keypass password
 ```
