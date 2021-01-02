@@ -24,6 +24,7 @@ import it.vige.labs.gc.rest.VotingPaperController;
 import it.vige.labs.gc.votingpapers.Candidate;
 import it.vige.labs.gc.votingpapers.Group;
 import it.vige.labs.gc.votingpapers.Party;
+import it.vige.labs.gc.votingpapers.State;
 import it.vige.labs.gc.votingpapers.Validation;
 import it.vige.labs.gc.votingpapers.VotingPaper;
 import it.vige.labs.gc.votingpapers.VotingPapers;
@@ -45,7 +46,7 @@ public class VotingPaperTest {
 	public void votingPaper() throws Exception {
 		VotingPapers votingPapers = votingPaperController.getVotingPapers();
 		List<VotingPaper> list = votingPapers.getVotingPapers();
-		Assert.assertEquals("is admin", true, votingPapers.isAdmin());
+		Assert.assertEquals("is prepare", State.PREPARE, votingPapers.getState());
 		Assert.assertEquals("size ok", 4, list.size());
 		logger.info(list + "");
 
@@ -53,7 +54,7 @@ public class VotingPaperTest {
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
 		Assert.assertFalse("you must be admin", messages.isOk());
 
-		votingPapers.setAdmin(true);
+		votingPapers.setState(State.PREPARE);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		Assert.assertTrue("you must be admin", messages.isOk());
 

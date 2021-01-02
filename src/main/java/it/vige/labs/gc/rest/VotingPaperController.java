@@ -10,12 +10,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.vige.labs.gc.JavaAppApplication;
 import it.vige.labs.gc.messages.Messages;
+import it.vige.labs.gc.votingpapers.State;
 import it.vige.labs.gc.votingpapers.VotingPapers;
 import it.vige.labs.gc.websocket.WebSocketClient;
 
@@ -40,14 +42,24 @@ public class VotingPaperController {
 		return generateVotingPapers(profiles);
 	}
 
+	@GetMapping(value = "/state")
+	public Messages setState(@RequestParam("state") State state) throws Exception {
+		votingPapers.setState(state);
+		webSocketClient.getStompSession().send(JavaAppApplication.TOPIC_NAME, votingPapers);
+		return Validator.defaultMessage;
+	}
+
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
-		Messages messages = validator.validate(postVotingPapers);
-		if (messages.isOk()) {
-			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
-			webSocketClient.getStompSession().send(JavaAppApplication.TOPIC_NAME, votingPapers);
-		}
-		return messages;
+		if (votingPapers.getState() == State.PREPARE) {
+			Messages messages = validator.validate(postVotingPapers);
+			if (messages.isOk()) {
+				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+				webSocketClient.getStompSession().send(JavaAppApplication.TOPIC_NAME, votingPapers);
+			}
+			return messages;
+		} else
+			return Validator.errorMessage;
 	}
 
 	public static VotingPapers generateVotingPapers(String[] profiles) {
@@ -58,12 +70,12 @@ public class VotingPaperController {
 					InputStream jsonStream = new FileInputStream("src/test/resources/mock/config-app.json");
 					VotingPapers votingPapersFromJson = objectMapper.readValue(jsonStream, VotingPapers.class);
 					votingPapers.setVotingPapers(votingPapersFromJson.getVotingPapers());
-					votingPapers.setAdmin(votingPapersFromJson.isAdmin());
+					votingPapers.setState(votingPapersFromJson.getState());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else
-				votingPapers.setAdmin(true);
+				votingPapers.setState(State.PREPARE);
 		}
 		return votingPapers;
 	}
