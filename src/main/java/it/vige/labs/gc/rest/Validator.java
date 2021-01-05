@@ -4,10 +4,10 @@ import java.util.Arrays;
 
 import org.springframework.stereotype.Component;
 
+import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Message;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.messages.Severity;
-import it.vige.labs.gc.votingpapers.VotingPapers;
 
 @Component
 public class Validator {

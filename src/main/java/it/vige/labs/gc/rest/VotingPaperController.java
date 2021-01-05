@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.vige.labs.gc.JavaAppApplication;
+import it.vige.labs.gc.bean.votingpapers.State;
+import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
-import it.vige.labs.gc.votingpapers.State;
-import it.vige.labs.gc.votingpapers.VotingPapers;
 import it.vige.labs.gc.websocket.WebSocketClient;
 
 @RestController

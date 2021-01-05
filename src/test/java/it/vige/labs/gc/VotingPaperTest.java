@@ -17,17 +17,17 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import it.vige.labs.gc.bean.votingpapers.Candidate;
+import it.vige.labs.gc.bean.votingpapers.Group;
+import it.vige.labs.gc.bean.votingpapers.Party;
+import it.vige.labs.gc.bean.votingpapers.State;
+import it.vige.labs.gc.bean.votingpapers.Validation;
+import it.vige.labs.gc.bean.votingpapers.VotingPaper;
+import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.rest.Sex;
 import it.vige.labs.gc.rest.Type;
 import it.vige.labs.gc.rest.VotingPaperController;
-import it.vige.labs.gc.votingpapers.Candidate;
-import it.vige.labs.gc.votingpapers.Group;
-import it.vige.labs.gc.votingpapers.Party;
-import it.vige.labs.gc.votingpapers.State;
-import it.vige.labs.gc.votingpapers.Validation;
-import it.vige.labs.gc.votingpapers.VotingPaper;
-import it.vige.labs.gc.votingpapers.VotingPapers;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
