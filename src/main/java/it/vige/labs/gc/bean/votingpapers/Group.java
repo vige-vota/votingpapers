@@ -40,7 +40,7 @@ public class Group extends Validation {
 		if (result && parties != null)
 			result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers));
 		if (result && image != null)
-			result = image.length() <= Validation.IMAGE_SIZE;
+			result = image.length() <= IMAGE_SIZE;
 		return result;
 	}
 

@@ -1,8 +1,11 @@
 package it.vige.labs.gc.bean.votingpapers;
 
-import java.util.List;
+import static it.vige.labs.gc.rest.Type.BIGGER;
+import static it.vige.labs.gc.rest.Type.BIGGER_PARTYGROUP;
+import static it.vige.labs.gc.rest.Type.LITTLE;
+import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
 
-import it.vige.labs.gc.rest.Type;
+import java.util.List;
 
 public class VotingPaper extends Validation {
 
@@ -82,13 +85,13 @@ public class VotingPaper extends Validation {
 				result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers));
 		if (result && parties != null)
 			result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers));
-		if (result && groups != null && type != null && type.equals(Type.LITTLE_NOGROUP.asString()))
+		if (result && groups != null && type != null && type.equals(LITTLE_NOGROUP.asString()))
 			result = false;
 		return result;
 	}
 
 	private boolean hasType() {
-		return type.equals(Type.BIGGER.asString()) || type.equals(Type.BIGGER_PARTYGROUP.asString())
-				|| type.equals(Type.LITTLE.asString()) || type.equals(Type.LITTLE_NOGROUP.asString());
+		return type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())
+				|| type.equals(LITTLE.asString()) || type.equals(LITTLE_NOGROUP.asString());
 	}
 }

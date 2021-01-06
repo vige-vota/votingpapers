@@ -1,6 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
-import it.vige.labs.gc.rest.Sex;
+import static it.vige.labs.gc.rest.Sex.F;
+import static it.vige.labs.gc.rest.Sex.M;
 
 public class Candidate extends Validation {
 
@@ -29,7 +30,7 @@ public class Candidate extends Validation {
 		boolean result = super.validate(remoteVotingPapers);
 		if (result && !name.trim().contains(" "))
 			result = false;
-		if (result && sex != Sex.M.asChar() && sex != Sex.F.asChar())
+		if (result && sex != M.asChar() && sex != F.asChar())
 			result = false;
 		if (result && image != null)
 			result = image.length() <= Validation.IMAGE_SIZE;

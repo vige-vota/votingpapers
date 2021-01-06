@@ -1,5 +1,10 @@
 package it.vige.labs.gc.websocket;
 
+import static it.vige.labs.gc.JavaAppApplication.BROKER_NAME;
+import static javax.net.ssl.KeyManagerFactory.getDefaultAlgorithm;
+import static javax.net.ssl.KeyManagerFactory.getInstance;
+import static org.apache.tomcat.websocket.Constants.SSL_CONTEXT_PROPERTY;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +18,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
-import org.apache.tomcat.websocket.Constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -21,8 +25,6 @@ import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-
-import it.vige.labs.gc.JavaAppApplication;
 
 @Service
 public class WebSocketClient {
@@ -57,14 +59,12 @@ public class WebSocketClient {
 	private void connect() throws Exception {
 		if (websocketScheme.equals("wss")) {
 			SSLContext sslContext = sslContext(keystoreFile, keystorePass);
-			standardWebSocketClient.getUserProperties().put(Constants.SSL_CONTEXT_PROPERTY, sslContext);
+			standardWebSocketClient.getUserProperties().put(SSL_CONTEXT_PROPERTY, sslContext);
 		}
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-		stompSession = stompClient
-				.connect(websocketScheme + "://" + serverHost + ":" + serverPort + JavaAppApplication.BROKER_NAME,
-						new StompSessionHandlerAdapter() {
-						})
-				.get();
+		stompSession = stompClient.connect(websocketScheme + "://" + serverHost + ":" + serverPort + BROKER_NAME,
+				new StompSessionHandlerAdapter() {
+				}).get();
 	}
 
 	public StompSession getStompSession() throws Exception {
@@ -78,7 +78,7 @@ public class WebSocketClient {
 		try (InputStream in = new FileInputStream(keystoreFile)) {
 			keystore.load(in, password.toCharArray());
 		}
-		KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+		KeyManagerFactory keyManagerFactory = getInstance(getDefaultAlgorithm());
 		keyManagerFactory.init(keystore, password.toCharArray());
 
 		final X509KeyManager origKm = (X509KeyManager) keyManagerFactory.getKeyManagers()[0];

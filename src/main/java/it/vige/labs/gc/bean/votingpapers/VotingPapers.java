@@ -1,5 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class VotingPapers {
 
 	public boolean validate(VotingPapers remoteVotingPapers) {
 		boolean result = false;
-		if (state == State.PREPARE) {
+		if (state == PREPARE) {
 			if (remoteVotingPapers != null)
 				result = remoteVotingPapers.getVotingPapers().parallelStream()
 						.allMatch(votingPaper -> votingPaper.validate(remoteVotingPapers));

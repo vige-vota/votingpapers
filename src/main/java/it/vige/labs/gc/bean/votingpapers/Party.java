@@ -34,7 +34,7 @@ public class Party extends Validation {
 				result = false;
 		}
 		if (result && image != null)
-			result = image.length() <= Validation.IMAGE_SIZE;
+			result = image.length() <= IMAGE_SIZE;
 		return result;
 	}
 

@@ -1,5 +1,10 @@
 package it.vige.labs.gc.rest;
 
+import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
+import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
+import static it.vige.labs.gc.rest.Validator.defaultMessage;
+import static it.vige.labs.gc.rest.Validator.errorMessage;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.vige.labs.gc.JavaAppApplication;
 import it.vige.labs.gc.bean.votingpapers.State;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
@@ -45,8 +49,8 @@ public class VotingPaperController {
 	@GetMapping(value = "/state")
 	public Messages setState(@RequestParam("state") State state) throws Exception {
 		votingPapers.setState(state);
-		webSocketClient.getStompSession().send(JavaAppApplication.TOPIC_NAME, votingPapers);
-		return Validator.defaultMessage;
+		webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
+		return defaultMessage;
 	}
 
 	@PostMapping(value = "/votingPapers")
@@ -55,11 +59,11 @@ public class VotingPaperController {
 			Messages messages = validator.validate(postVotingPapers);
 			if (messages.isOk()) {
 				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
-				webSocketClient.getStompSession().send(JavaAppApplication.TOPIC_NAME, votingPapers);
+				webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
 			}
 			return messages;
 		} else
-			return Validator.errorMessage;
+			return errorMessage;
 	}
 
 	public static VotingPapers generateVotingPapers(String[] profiles) {
@@ -75,7 +79,7 @@ public class VotingPaperController {
 					e.printStackTrace();
 				}
 			} else
-				votingPapers.setState(State.PREPARE);
+				votingPapers.setState(PREPARE);
 		}
 		return votingPapers;
 	}
