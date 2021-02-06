@@ -2,12 +2,17 @@ package it.vige.labs.gc.rest;
 
 import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
+import static it.vige.labs.gc.rest.Type.BIGGER;
 import static it.vige.labs.gc.rest.Validator.defaultMessage;
 import static it.vige.labs.gc.rest.Validator.errorMessage;
+import static java.awt.Color.PINK;
+import static java.lang.String.format;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -20,7 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.vige.labs.gc.bean.votingpapers.Group;
 import it.vige.labs.gc.bean.votingpapers.State;
+import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.websocket.WebSocketClient;
@@ -78,8 +85,18 @@ public class VotingPaperController {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			} else
+			} else {
+				List<VotingPaper> pages = new ArrayList<VotingPaper>();
+				VotingPaper page = new VotingPaper();
+				page.setName("VOTA");
+				page.setType(BIGGER.name());
+				String color = format("%02x%02x%02x", PINK.getRed(), PINK.getGreen(), PINK.getBlue());
+				page.setColor(color);
+				page.setGroups(new ArrayList<Group>());
+				pages.add(page);
+				votingPapers.setVotingPapers(pages);
 				votingPapers.setState(PREPARE);
+			}
 		}
 		return votingPapers;
 	}
