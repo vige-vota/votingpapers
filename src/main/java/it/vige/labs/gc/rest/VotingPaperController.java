@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -62,15 +64,29 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
-		if (votingPapers.getState() == State.PREPARE) {
-			Messages messages = validator.validate(postVotingPapers);
-			if (messages.isOk()) {
-				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
-				webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
-			}
-			return messages;
+		if (votingPapers.getState() == PREPARE)
+			return addVotingPapers(postVotingPapers);
+		else
+			return errorMessage;
+	}
+
+	@PostMapping(value = "/import")
+	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
+		if (votingPapers.getState() == PREPARE) {
+			ObjectMapper objectMapper = new ObjectMapper();
+			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
+			return addVotingPapers(postVotingPapers);
 		} else
 			return errorMessage;
+	}
+
+	private Messages addVotingPapers(VotingPapers postVotingPapers) throws Exception {
+		Messages messages = validator.validate(postVotingPapers);
+		if (messages.isOk()) {
+			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
+		}
+		return messages;
 	}
 
 	public static VotingPapers generateVotingPapers(String[] profiles) {
