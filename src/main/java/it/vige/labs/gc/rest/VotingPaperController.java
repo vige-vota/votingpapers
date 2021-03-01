@@ -1,5 +1,9 @@
 package it.vige.labs.gc.rest;
 
+import static it.vige.labs.gc.Authorities.ADMIN_ROLE;
+import static it.vige.labs.gc.Authorities.PARTY_ROLE;
+import static it.vige.labs.gc.Authorities.REPRESENTATIVE_ROLE;
+import static it.vige.labs.gc.Authorities.hasRole;
 import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.rest.Type.BIGGER;
@@ -57,14 +61,17 @@ public class VotingPaperController {
 
 	@GetMapping(value = "/state")
 	public Messages setState(@RequestParam("state") State state) throws Exception {
-		votingPapers.setState(state);
-		webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
-		return defaultMessage;
+		if (hasRole(ADMIN_ROLE)) {
+			votingPapers.setState(state);
+			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
+			return defaultMessage;
+		} else
+			return errorMessage;
 	}
 
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
-		if (votingPapers.getState() == PREPARE)
+		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE, PARTY_ROLE, REPRESENTATIVE_ROLE))
 			return addVotingPapers(postVotingPapers);
 		else
 			return errorMessage;
@@ -72,7 +79,7 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/import")
 	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
-		if (votingPapers.getState() == PREPARE) {
+		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE, PARTY_ROLE, REPRESENTATIVE_ROLE)) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
 			return addVotingPapers(postVotingPapers);
