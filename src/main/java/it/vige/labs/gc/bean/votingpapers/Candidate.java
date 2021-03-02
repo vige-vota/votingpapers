@@ -2,6 +2,9 @@ package it.vige.labs.gc.bean.votingpapers;
 
 import static it.vige.labs.gc.rest.Sex.F;
 import static it.vige.labs.gc.rest.Sex.M;
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
 
 public class Candidate extends Validation {
 
@@ -23,6 +26,17 @@ public class Candidate extends Validation {
 
 	public void setSex(char sex) {
 		this.sex = sex;
+	}
+
+	public static Candidate findCandidate(VotingPapers votingPapers) {
+		List<Candidate> candidates = votingPapers.getVotingPapers().parallelStream()
+				.flatMap(votingPaper -> votingPaper.getGroups().stream()).flatMap(group -> group.getParties().stream())
+				.flatMap(party -> party.getCandidates().stream()).collect(toList());
+		return candidates.parallelStream().filter(e -> e.getId() == 0).findFirst().get();
+	}
+
+	public void update(VotingPapers votingPapers) {
+
 	}
 
 	@Override

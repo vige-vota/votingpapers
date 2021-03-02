@@ -15,11 +15,13 @@ public class Authorities {
 
 	public final static String REPRESENTATIVE_ROLE = "ROLE_REPRESENTATIVE";
 
+	public final static String GROUP_ROLE = "ROLE_GROUP";
+
 	public final static String PARTY_ROLE = "ROLE_PARTY";
 
 	public static boolean hasRole(String... role) {
 		List<String> roles = asList(role);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return authentication.getAuthorities().stream().anyMatch(r -> roles.contains(r.getAuthority()));
+		return authentication.getAuthorities().parallelStream().anyMatch(r -> roles.contains(r.getAuthority()));
 	}
 }
