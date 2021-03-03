@@ -1,12 +1,8 @@
 package it.vige.labs.gc.rest;
 
 import static it.vige.labs.gc.Authorities.ADMIN_ROLE;
-import static it.vige.labs.gc.Authorities.GROUP_ROLE;
-import static it.vige.labs.gc.Authorities.PARTY_ROLE;
-import static it.vige.labs.gc.Authorities.REPRESENTATIVE_ROLE;
 import static it.vige.labs.gc.Authorities.hasRole;
 import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
-import static it.vige.labs.gc.bean.votingpapers.Candidate.findCandidate;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.rest.Type.BIGGER;
 import static it.vige.labs.gc.rest.Validator.defaultMessage;
@@ -33,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.vige.labs.gc.bean.votingpapers.Candidate;
 import it.vige.labs.gc.bean.votingpapers.Group;
 import it.vige.labs.gc.bean.votingpapers.State;
 import it.vige.labs.gc.bean.votingpapers.VotingPaper;
@@ -74,7 +69,7 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
-		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE, GROUP_ROLE, PARTY_ROLE, REPRESENTATIVE_ROLE))
+		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE))
 			return addVotingPapers(postVotingPapers);
 		else
 			return errorMessage;
@@ -82,7 +77,7 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/import")
 	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
-		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE, GROUP_ROLE, PARTY_ROLE, REPRESENTATIVE_ROLE)) {
+		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE)) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
 			return addVotingPapers(postVotingPapers);
@@ -93,11 +88,7 @@ public class VotingPaperController {
 	private Messages addVotingPapers(VotingPapers postVotingPapers) throws Exception {
 		Messages messages = validator.validate(postVotingPapers);
 		if (messages.isOk()) {
-			if (hasRole(REPRESENTATIVE_ROLE)) {
-				Candidate candidate = findCandidate(postVotingPapers);
-				candidate.update(postVotingPapers);
-			} else
-				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
 			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
 		}
 		return messages;
