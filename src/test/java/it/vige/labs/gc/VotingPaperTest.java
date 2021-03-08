@@ -2,23 +2,36 @@ package it.vige.labs.gc;
 
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.bean.votingpapers.Validation.IMAGE_SIZE;
+import static it.vige.labs.gc.users.Authorities.CITIZEN_ROLE;
 import static java.util.Arrays.asList;
 import static java.util.Base64.getEncoder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpStatus.OK;
 
 import java.io.BufferedInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.RestTemplate;
+
+import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
+import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 
 import it.vige.labs.gc.bean.votingpapers.Candidate;
 import it.vige.labs.gc.bean.votingpapers.Group;
@@ -29,6 +42,7 @@ import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.rest.Sex;
 import it.vige.labs.gc.rest.Type;
 import it.vige.labs.gc.rest.VotingPaperController;
+import it.vige.labs.gc.users.Authorities;
 
 @SpringBootTest(webEnvironment = DEFINED_PORT)
 @ActiveProfiles("dev")
@@ -38,11 +52,19 @@ public class VotingPaperTest {
 
 	private String BIG_IMAGE = "/parties/pinetina.jpg";
 	private String RIGHT_IMAGE = "/parties/movimento5stelle.jpg";
+	private final static String DEFAULT_USER = "669d3be4-4a67-41f5-a49d-5fe5157b6dd5";
 
 	@Autowired
 	private VotingPaperController votingPaperController;
 
+	@Mock
+	private RestTemplate restTemplate;
+
+	@Autowired
+	private Authorities authorities;
+
 	@Test
+	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
 	public void votingPaper() throws Exception {
 		VotingPapers votingPapers = votingPaperController.getVotingPapers();
 		List<VotingPaper> list = votingPapers.getVotingPapers();
@@ -50,13 +72,14 @@ public class VotingPaperTest {
 		assertEquals(4, list.size(), "size ok");
 		logger.info(list + "");
 
+		mockUsers();
 		votingPapers = new VotingPapers();
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
-		assertFalse(messages.isOk(), "you must be admin");
+		assertFalse(messages.isOk(), "you must be admin or to have attributes");
 
 		votingPapers.setState(PREPARE);
 		messages = votingPaperController.setVotingPapers(votingPapers);
-		assertTrue(messages.isOk(), "you must be admin");
+		assertTrue(messages.isOk(), "you must be admin or to have attributes");
 
 		VotingPaper votingPaper = new VotingPaper();
 		votingPapers.setVotingPapers(new ArrayList<VotingPaper>(asList(new VotingPaper[] { votingPaper })));
@@ -171,6 +194,18 @@ public class VotingPaperTest {
 		votingPaper.setParties(parties);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "no groups and parties in the same voting paper");
+	}
+
+	private void mockUsers() {
+		UserRepresentation user = new UserRepresentation();
+		user.setUsername(DEFAULT_USER);
+		Map<String, List<String>> attributes = new HashMap<String, List<String>>();
+		attributes.put("income", asList(new String[] { "100" }));
+		user.setAttributes(attributes);
+		when(restTemplate.exchange(authorities.getFindUserByIdURI(DEFAULT_USER).toString(), GET, null,
+				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));
+		authorities.setRestTemplate(restTemplate);
+		votingPaperController.setAuthorities(authorities);
 	}
 
 }

@@ -1,12 +1,11 @@
 package it.vige.labs.gc.rest;
 
-import static it.vige.labs.gc.Authorities.ADMIN_ROLE;
-import static it.vige.labs.gc.Authorities.hasRole;
 import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.rest.Type.BIGGER;
 import static it.vige.labs.gc.rest.Validator.defaultMessage;
 import static it.vige.labs.gc.rest.Validator.errorMessage;
+import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.awt.Color.PINK;
 import static java.lang.String.format;
 
@@ -34,6 +33,7 @@ import it.vige.labs.gc.bean.votingpapers.State;
 import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
+import it.vige.labs.gc.users.Authorities;
 import it.vige.labs.gc.websocket.WebSocketClient;
 
 @RestController
@@ -44,6 +44,9 @@ public class VotingPaperController {
 
 	@Autowired
 	private WebSocketClient webSocketClient;
+
+	@Autowired
+	private Authorities authorities;
 
 	@Autowired
 	private Validator validator;
@@ -59,7 +62,7 @@ public class VotingPaperController {
 
 	@GetMapping(value = "/state")
 	public Messages setState(@RequestParam("state") State state) throws Exception {
-		if (hasRole(ADMIN_ROLE)) {
+		if (authorities.hasRole(ADMIN_ROLE)) {
 			votingPapers.setState(state);
 			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
 			return defaultMessage;
@@ -69,7 +72,7 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
-		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE))
+		if (getVotingPapers().getState() == PREPARE && (authorities.hasRole(ADMIN_ROLE) || authorities.hasAttributes()))
 			return addVotingPapers(postVotingPapers);
 		else
 			return errorMessage;
@@ -77,7 +80,7 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/import")
 	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
-		if (votingPapers.getState() == PREPARE && hasRole(ADMIN_ROLE)) {
+		if (getVotingPapers().getState() == PREPARE && (authorities.hasRole(ADMIN_ROLE) || authorities.hasAttributes())) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
 			return addVotingPapers(postVotingPapers);
@@ -120,5 +123,9 @@ public class VotingPaperController {
 			}
 		}
 		return votingPapers;
+	}
+
+	public void setAuthorities(Authorities authorities) {
+		this.authorities = authorities;
 	}
 }
