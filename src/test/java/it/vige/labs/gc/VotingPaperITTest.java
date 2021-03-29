@@ -2,6 +2,7 @@ package it.vige.labs.gc;
 
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.bean.votingpapers.Validation.IMAGE_SIZE;
+import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.util.Arrays.asList;
 import static java.util.Base64.getEncoder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,6 +42,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -74,7 +76,7 @@ public class VotingPaperITTest {
 
 		@Override
 		public String getName() {
-			return "myprincipal";
+			return "77803bc2-6533-424c-bdb1-277c9dd49d11";
 		}
 
 	};
@@ -104,8 +106,16 @@ public class VotingPaperITTest {
 
 		RefreshableKeycloakSecurityContext securityContext = new RefreshableKeycloakSecurityContext(null, null, token,
 				null, null, null, null);
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		authorities.add(new GrantedAuthority() {
+			public String getAuthority() {
+				return ADMIN_ROLE;
+			}
+		});
 		KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, securityContext);
-		getContext().setAuthentication(new KeycloakAuthenticationToken(account, true));
+		KeycloakAuthenticationToken keycloakAuthenticationToken = new KeycloakAuthenticationToken(account, true,
+				authorities);
+		getContext().setAuthentication(keycloakAuthenticationToken);
 	}
 
 	@Test
