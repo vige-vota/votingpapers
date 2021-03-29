@@ -8,7 +8,6 @@ import static java.util.Base64.getEncoder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.Mockito.when;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
@@ -21,9 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.Mock;
 import org.slf4j.Logger;
@@ -49,7 +46,6 @@ import it.vige.labs.gc.users.Authorities;
 
 @SpringBootTest(webEnvironment = DEFINED_PORT)
 @ActiveProfiles("dev")
-@TestInstance(PER_CLASS)
 public class VotingPaperTest {
 
 	private Logger logger = getLogger(VotingPaperTest.class);
@@ -67,11 +63,6 @@ public class VotingPaperTest {
 	@Autowired
 	private Authorities authorities;
 
-	@BeforeAll
-	public void init() {
-		mockUsers();
-	}
-
 	@Test
 	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
 	public void votingPaper() throws Exception {
@@ -81,6 +72,7 @@ public class VotingPaperTest {
 		assertEquals(4, list.size(), "size ok");
 		logger.info(list + "");
 
+		mockUsers();
 		votingPapers = new VotingPapers();
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "you must be admin or to have attributes");
