@@ -35,3 +35,13 @@ dependencies {
     implementation('com.c4-soft.springaddons:spring-security-oauth2-test-webmvc-addons:2.4.1')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+    filter {
+        excludeTestsMatching '*ITTest'
+    }
+}

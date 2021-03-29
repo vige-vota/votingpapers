@@ -2,39 +2,49 @@ package it.vige.labs.gc;
 
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.bean.votingpapers.Validation.IMAGE_SIZE;
-import static it.vige.labs.gc.users.Authorities.CITIZEN_ROLE;
 import static java.util.Arrays.asList;
 import static java.util.Base64.getEncoder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-import static org.mockito.Mockito.when;
+import static org.keycloak.OAuth2Constants.CLIENT_CREDENTIALS;
+import static org.keycloak.OAuth2Constants.GRANT_TYPE;
+import static org.keycloak.adapters.KeycloakDeploymentBuilder.build;
+import static org.keycloak.adapters.authentication.ClientCredentialsProviderUtils.setClientCredentials;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.core.context.SecurityContextHolder.getContext;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.keycloak.representations.idm.UserRepresentation;
-import org.mockito.Mock;
+import org.keycloak.adapters.KeycloakDeployment;
+import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
+import org.keycloak.adapters.spi.KeycloakAccount;
+import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessTokenResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
-import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 
 import it.vige.labs.gc.bean.votingpapers.Candidate;
 import it.vige.labs.gc.bean.votingpapers.Group;
@@ -45,35 +55,60 @@ import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.rest.Sex;
 import it.vige.labs.gc.rest.Type;
 import it.vige.labs.gc.rest.VotingPaperController;
-import it.vige.labs.gc.users.Authorities;
 
 @SpringBootTest(webEnvironment = DEFINED_PORT)
 @ActiveProfiles("dev")
-@TestInstance(PER_CLASS)
-public class VotingPaperTest {
+public class VotingPaperITTest {
 
-	private Logger logger = getLogger(VotingPaperTest.class);
+	private Logger logger = getLogger(VotingPaperITTest.class);
 
 	private String BIG_IMAGE = "/parties/pinetina.jpg";
 	private String RIGHT_IMAGE = "/parties/movimento5stelle.jpg";
-	private final static String DEFAULT_USER = "669d3be4-4a67-41f5-a49d-5fe5157b6dd5";
 
 	@Autowired
 	private VotingPaperController votingPaperController;
 
-	@Mock
-	private RestTemplate restTemplate;
+	private static String token;
 
-	@Autowired
-	private Authorities authorities;
+	private static Principal principal = new Principal() {
+
+		@Override
+		public String getName() {
+			return "myprincipal";
+		}
+
+	};
+
+	private static Set<String> roles = new HashSet<String>(asList(new String[] { "admin", "citizen" }));
 
 	@BeforeAll
-	public void init() {
-		mockUsers();
+	public static void setAuthentication() throws FileNotFoundException {
+		FileInputStream config = new FileInputStream("src/test/resources/keycloak.json");
+		KeycloakDeployment deployment = build(config);
+		Map<String, String> reqHeaders = new HashMap<>();
+		Map<String, String> reqParams = new HashMap<>();
+		setClientCredentials(deployment, reqHeaders, reqParams);
+		HttpHeaders headers = new HttpHeaders();
+		reqHeaders.forEach((x, y) -> {
+			headers.add(x, y);
+		});
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+		map.add(GRANT_TYPE, CLIENT_CREDENTIALS);
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		RestTemplate restTemplate = new RestTemplate();
+		String url = deployment.getTokenUrl();
+		ResponseEntity<AccessTokenResponse> response = restTemplate.exchange(url, POST, request,
+				AccessTokenResponse.class, reqParams);
+		token = response.getBody().getToken();
+
+		RefreshableKeycloakSecurityContext securityContext = new RefreshableKeycloakSecurityContext(null, null, token,
+				null, null, null, null);
+		KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, securityContext);
+		getContext().setAuthentication(new KeycloakAuthenticationToken(account, true));
 	}
 
 	@Test
-	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
 	public void votingPaper() throws Exception {
 		VotingPapers votingPapers = votingPaperController.getVotingPapers();
 		List<VotingPaper> list = votingPapers.getVotingPapers();
@@ -83,11 +118,11 @@ public class VotingPaperTest {
 
 		votingPapers = new VotingPapers();
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
-		assertFalse(messages.isOk(), "you must be admin or to have attributes");
+		assertFalse(messages.isOk(), "you must be admin");
 
 		votingPapers.setState(PREPARE);
 		messages = votingPaperController.setVotingPapers(votingPapers);
-		assertTrue(messages.isOk(), "you must be admin or to have attributes");
+		assertTrue(messages.isOk(), "you must be admin");
 
 		VotingPaper votingPaper = new VotingPaper();
 		votingPapers.setVotingPapers(new ArrayList<VotingPaper>(asList(new VotingPaper[] { votingPaper })));
@@ -202,18 +237,6 @@ public class VotingPaperTest {
 		votingPaper.setParties(parties);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "no groups and parties in the same voting paper");
-	}
-
-	private void mockUsers() {
-		UserRepresentation user = new UserRepresentation();
-		user.setUsername(DEFAULT_USER);
-		Map<String, List<String>> attributes = new HashMap<String, List<String>>();
-		attributes.put("income", asList(new String[] { "100" }));
-		user.setAttributes(attributes);
-		when(restTemplate.exchange(authorities.getFindUserByIdURI(DEFAULT_USER).toString(), GET, null,
-				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));
-		authorities.setRestTemplate(restTemplate);
-		votingPaperController.setAuthorities(authorities);
 	}
 
 }
