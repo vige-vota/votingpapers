@@ -23,10 +23,8 @@ import java.io.FileNotFoundException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -81,7 +79,14 @@ public class VotingPaperITTest {
 
 	};
 
-	private static Set<String> roles = new HashSet<String>(asList(new String[] { "admin", "citizen" }));
+	private static List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+	{
+		authorities.add(new GrantedAuthority() {
+			public String getAuthority() {
+				return ADMIN_ROLE;
+			}
+		});
+	}
 
 	@BeforeAll
 	public static void setAuthentication() throws FileNotFoundException {
@@ -106,16 +111,8 @@ public class VotingPaperITTest {
 
 		RefreshableKeycloakSecurityContext securityContext = new RefreshableKeycloakSecurityContext(null, null, token,
 				null, null, null, null);
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		authorities.add(new GrantedAuthority() {
-			public String getAuthority() {
-				return ADMIN_ROLE;
-			}
-		});
-		KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, securityContext);
-		KeycloakAuthenticationToken keycloakAuthenticationToken = new KeycloakAuthenticationToken(account, true,
-				authorities);
-		getContext().setAuthentication(keycloakAuthenticationToken);
+		KeycloakAccount account = new SimpleKeycloakAccount(principal, null, securityContext);
+		getContext().setAuthentication(new KeycloakAuthenticationToken(account, true, authorities));
 	}
 
 	@Test
