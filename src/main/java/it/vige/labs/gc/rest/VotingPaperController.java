@@ -1,5 +1,6 @@
 package it.vige.labs.gc.rest;
 
+import static it.vige.labs.gc.JavaAppApplication.BROKER_NAME;
 import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.rest.Type.BIGGER;
@@ -17,6 +18,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,16 +38,12 @@ import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.users.Authorities;
-import it.vige.labs.gc.websocket.WebSocketClient;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class VotingPaperController {
 
 	public final static VotingPapers votingPapers = new VotingPapers();
-
-	@Autowired
-	private WebSocketClient webSocketClient;
 
 	@Autowired
 	private Authorities authorities;
@@ -64,7 +64,7 @@ public class VotingPaperController {
 	public Messages setState(@RequestParam("state") State state) throws Exception {
 		if (authorities.hasRole(ADMIN_ROLE)) {
 			votingPapers.setState(state);
-			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
+			send(votingPapers);
 			return defaultMessage;
 		} else
 			return errorMessage;
@@ -80,7 +80,8 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/import")
 	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
-		if (getVotingPapers().getState() == PREPARE && (authorities.hasRole(ADMIN_ROLE) || authorities.hasAttributes())) {
+		if (getVotingPapers().getState() == PREPARE
+				&& (authorities.hasRole(ADMIN_ROLE) || authorities.hasAttributes())) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
 			return addVotingPapers(postVotingPapers);
@@ -88,11 +89,17 @@ public class VotingPaperController {
 			return errorMessage;
 	}
 
+	@MessageMapping(BROKER_NAME)
+	@SendTo(TOPIC_NAME)
+	public VotingPapers send(@Payload VotingPapers votingPapers) {
+		return votingPapers;
+	}
+
 	private Messages addVotingPapers(VotingPapers postVotingPapers) throws Exception {
 		Messages messages = validator.validate(postVotingPapers);
 		if (messages.isOk()) {
 			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
-			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
+			send(votingPapers);
 		}
 		return messages;
 	}
