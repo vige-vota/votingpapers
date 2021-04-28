@@ -18,23 +18,18 @@ apply plugin: 'io.spring.dependency-management'
 group = 'it.vige'
 version = '1.0.0-SNAPSHOT'
 
-sourceCompatibility = 15
+sourceCompatibility = 13
 
 repositories {
     mavenCentral()
 }
 
-configurations.all {
-	exclude module: 'spring-boot-starter-tomcat'
-	exclude module: 'spring-boot-starter-jetty'
-}
-
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-undertow')
+    implementation('org.springframework.boot:spring-boot-starter-data-rest')
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation('org.springframework.boot:spring-boot-starter-security')
     implementation('io.springfox:springfox-boot-starter:3.0.0')
-    implementation('org.keycloak:keycloak-spring-boot-starter:12.0.4')
+    implementation('org.keycloak:keycloak-spring-boot-starter:12.0.2')
     implementation('commons-fileupload:commons-fileupload:1.4')
     implementation('com.c4-soft.springaddons:spring-security-oauth2-test-webmvc-addons:2.4.1')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
