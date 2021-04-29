@@ -113,7 +113,7 @@ public class VotingPaperController {
 				List<VotingPaper> pages = new ArrayList<VotingPaper>();
 				VotingPaper page = new VotingPaper();
 				page.setName("VOTA");
-				page.setType(BIGGER.name());
+				page.setType(BIGGER.asString());
 				String color = format("%02x%02x%02x", PINK.getRed(), PINK.getGreen(), PINK.getBlue());
 				page.setColor(color);
 				page.setGroups(new ArrayList<Group>());
