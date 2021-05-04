@@ -6,13 +6,6 @@ public abstract class Identifier {
 
 	protected String name;
 
-	public Identifier() {
-	}
-	
-	public Identifier(int id, String name) {
-		this.id = id;
-	}
-
 	public int getId() {
 		return id;
 	}

@@ -1,6 +1,12 @@
 package it.vige.labs.gc.users;
 
+import static java.util.Arrays.asList;
+
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
 
 public class User implements Serializable {
 
@@ -13,6 +19,8 @@ public class User implements Serializable {
 	private String surname;
 
 	private int income;
+
+	private Collection<? extends GrantedAuthority> roles;
 
 	public String getId() {
 		return id;
@@ -44,6 +52,23 @@ public class User implements Serializable {
 
 	public void setIncome(int income) {
 		this.income = income;
+	}
+
+	public Collection<? extends GrantedAuthority> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<? extends GrantedAuthority> roles) {
+		this.roles = roles;
+	}
+
+	public boolean hasAttributes() {
+		return getIncome() != -1;
+	}
+
+	public boolean hasRole(String... role) {
+		List<String> rolesTocompare = asList(role);
+		return roles.parallelStream().anyMatch(r -> rolesTocompare.contains(r.getAuthority()));
 	}
 
 	@Override

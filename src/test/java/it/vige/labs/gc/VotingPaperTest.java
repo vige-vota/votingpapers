@@ -2,6 +2,7 @@ package it.vige.labs.gc;
 
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.bean.votingpapers.Validation.IMAGE_SIZE;
+import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static it.vige.labs.gc.users.Authorities.CITIZEN_ROLE;
 import static java.util.Arrays.asList;
 import static java.util.Base64.getEncoder;
@@ -64,15 +65,15 @@ public class VotingPaperTest {
 	private Authorities authorities;
 
 	@Test
-	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
-	public void votingPaper() throws Exception {
+	@WithMockKeycloakAuth(authorities = { ADMIN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
+	public void votingPaperAdmin() throws Exception {
 		VotingPapers votingPapers = votingPaperController.getVotingPapers();
 		List<VotingPaper> list = votingPapers.getVotingPapers();
 		assertEquals(PREPARE, votingPapers.getState(), "is prepare");
 		assertEquals(4, list.size(), "size ok");
 		logger.info(list + "");
 
-		mockUsers();
+		mockUsers("100");
 		votingPapers = new VotingPapers();
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "you must be admin or to have attributes");
@@ -196,11 +197,92 @@ public class VotingPaperTest {
 		assertFalse(messages.isOk(), "no groups and parties in the same voting paper");
 	}
 
-	private void mockUsers() {
+	@Test
+	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
+	public void votingPaperCitizen() throws Exception {
+		VotingPapers currentVotingPapers = votingPaperController.getVotingPapers();
+
+		mockUsers("100");
+		VotingPapers votingPapers = new VotingPapers();
+		votingPapers.setState(PREPARE);
+		VotingPaper votingPaper = new VotingPaper();
+		votingPapers.setVotingPapers(new ArrayList<VotingPaper>(asList(new VotingPaper[] { votingPaper })));
+		votingPaper.setName("My first voting paper");
+		votingPaper.setColor("ff0055");
+		votingPaper.setType(Type.BIGGER.asString());
+
+		List<Group> groups = new ArrayList<Group>();
+		Group group = new Group();
+		groups.add(group);
+		votingPaper.setGroups(groups);
+		group.setName("my updated group");
+		group.setId(1);
+		Party party = new Party();
+		party.setId(101);
+		party.setName("new party name");
+		group.setParties(new ArrayList<Party>());
+		group.getParties().add(party);
+
+		Messages messages = votingPaperController.setVotingPapers(votingPapers);
+		assertTrue(messages.isOk(), "schede code not in the user properties, so no group is updated");
+
+		currentVotingPapers = votingPaperController.getVotingPapers();
+		currentVotingPapers.getVotingPapers().forEach(vPaper -> {
+			if (vPaper.getGroups() != null)
+				vPaper.getGroups().forEach(gr -> {
+					if (gr.getId() == group.getId())
+						assertFalse(group.getName().equals(gr.getName()),
+								"Group was not updated because the user is not authorized to update the group number 1");
+				});
+		});
+
+		votingPaper.setId(86);
+		group.setId(100);
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertTrue(messages.isOk(), "update is executed");
+		currentVotingPapers = votingPaperController.getVotingPapers();
+		currentVotingPapers.getVotingPapers().forEach(vPaper -> {
+			if (vPaper.getId() == 86)
+				assertFalse(vPaper.getName().equals(votingPaper.getName()),
+						"Voting paper was not updated because the user can update only the code where it is authorized, the number 100, a group");
+			if (vPaper.getGroups() != null)
+				vPaper.getGroups().forEach(gr -> {
+					if (gr.getId() == group.getId()) {
+						assertTrue(group.getName().equals(gr.getName()),
+								"Group was updated because the user is authorized to update the group number 100");
+						gr.getParties().forEach(pr -> {
+							if (pr.getId() == party.getId()) {
+								assertTrue(party.getName().equals(pr.getName()),
+										"Party was updated because the user is authorized to update the group number 100 and all its elements");
+							}
+						});
+					}
+				});
+		});
+
+		mockUsers("101");
+		party.setName("new party name 2");
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertTrue(messages.isOk(), "update is executed");
+		currentVotingPapers = votingPaperController.getVotingPapers();
+		currentVotingPapers.getVotingPapers().forEach(vPaper -> {
+			if (vPaper.getGroups() != null)
+				vPaper.getGroups().forEach(gr -> {
+					gr.getParties().forEach(pr -> {
+						if (pr.getId() == party.getId()) {
+							assertTrue(party.getName().equals(pr.getName()),
+									"Party was updated because the user is authorized to update the group number 101");
+						}
+					});
+				});
+		});
+	}
+
+	private void mockUsers(String income) {
 		UserRepresentation user = new UserRepresentation();
 		user.setUsername(DEFAULT_USER);
 		Map<String, List<String>> attributes = new HashMap<String, List<String>>();
-		attributes.put("income", asList(new String[] { "100" }));
+		attributes.put("income", asList(new String[] { income }));
 		user.setAttributes(attributes);
 		when(restTemplate.exchange(authorities.getFindUserByIdURI(DEFAULT_USER).toString(), GET, null,
 				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));

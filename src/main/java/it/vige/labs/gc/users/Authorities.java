@@ -44,30 +44,24 @@ public class Authorities implements Serializable, Converters {
 		return authentication.getAuthorities().parallelStream().anyMatch(r -> roles.contains(r.getAuthority()));
 	}
 
-	public boolean hasAttributes() throws ModuleException {
+	public User getUser() throws ModuleException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return findUserById(authentication.getName()).getIncome() != 0;
-	}
+		String id = authentication.getName();
+		UserRepresentation user = null;
+		try {
+			UriComponents uriComponents = newInstance().uri(getFindUserByIdURI(id)).buildAndExpand();
 
-	public User findUserById(String id) throws ModuleException {
-		if (id != null) {
-			UserRepresentation user = null;
-			try {
-				UriComponents uriComponents = newInstance().uri(getFindUserByIdURI(id)).buildAndExpand();
-
-				ResponseEntity<UserRepresentation> response = restTemplate.exchange(uriComponents.toString(), GET, null,
-						UserRepresentation.class);
-				user = response.getBody();
-			} catch (Exception e) {
-				String message = "Cannot find user by id " + id;
-				throw new ModuleException(message, e);
-			}
-			log.debug("user found: " + user);
-			User result = UserRepresentationToUser.apply(user);
-			return result;
-		} else {
-			throw new IllegalArgumentException("room cannot be null");
+			ResponseEntity<UserRepresentation> response = restTemplate.exchange(uriComponents.toString(), GET, null,
+					UserRepresentation.class);
+			user = response.getBody();
+		} catch (Exception e) {
+			String message = "Cannot find user by id " + id;
+			throw new ModuleException(message, e);
 		}
+		log.debug("user found: " + user);
+		User result = UserRepresentationToUser.apply(user);
+		result.setRoles(authentication.getAuthorities());
+		return result;
 	}
 
 	public URI getUsersURI() {

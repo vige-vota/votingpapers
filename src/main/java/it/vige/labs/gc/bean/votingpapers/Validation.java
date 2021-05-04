@@ -1,12 +1,19 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
+
+import it.vige.labs.gc.users.User;
+
 public class Validation extends Identifier {
 
 	public static final int IMAGE_SIZE = 60000;
 
-	public boolean validate(VotingPapers remoteVotingPapers) {
+	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = false;
-		if (name != null && !name.isEmpty() && !duplicate(id, remoteVotingPapers))
+		if (user.hasRole(ADMIN_ROLE) || user.getIncome() == id) {
+			if (name != null && !name.isEmpty() && !duplicate(id, remoteVotingPapers))
+				result = true;
+		} else
 			result = true;
 		return result;
 	};

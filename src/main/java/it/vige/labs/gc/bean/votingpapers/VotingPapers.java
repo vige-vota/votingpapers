@@ -5,6 +5,8 @@ import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.vige.labs.gc.users.User;
+
 public class VotingPapers {
 
 	private State state;
@@ -19,6 +21,15 @@ public class VotingPapers {
 		this.votingPapers = votingPapers;
 	}
 
+	public void setVotingPapers(List<VotingPaper> votingPapers, User user) {
+		this.votingPapers.forEach(votingPaper -> {
+			votingPapers.forEach(postVotingPaper -> {
+				if (votingPaper.getId() == postVotingPaper.getId())
+					votingPaper.add(postVotingPaper, user);
+			});
+		});
+	}
+
 	public State getState() {
 		return state;
 	}
@@ -27,12 +38,12 @@ public class VotingPapers {
 		this.state = state;
 	}
 
-	public boolean validate(VotingPapers remoteVotingPapers) {
+	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = false;
 		if (state == PREPARE) {
 			if (remoteVotingPapers != null)
 				result = remoteVotingPapers.getVotingPapers().parallelStream()
-						.allMatch(votingPaper -> votingPaper.validate(remoteVotingPapers));
+						.allMatch(votingPaper -> votingPaper.validate(remoteVotingPapers, user));
 			else
 				result = true;
 		}

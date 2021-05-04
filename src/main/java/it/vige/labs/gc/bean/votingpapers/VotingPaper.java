@@ -7,6 +7,8 @@ import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
 
 import java.util.List;
 
+import it.vige.labs.gc.users.User;
+
 public class VotingPaper extends Validation {
 
 	private int maxCandidates;
@@ -69,22 +71,61 @@ public class VotingPaper extends Validation {
 		this.parties = parties;
 	}
 
+	public void add(VotingPaper votingPaper, User user) {
+		if (user.getIncome() == getId()) {
+			setColor(votingPaper.getColor());
+			setDisjointed(votingPaper.isDisjointed());
+			setGroups(votingPaper.getGroups());
+			setMaxCandidates(votingPaper.getMaxCandidates());
+			setName(votingPaper.getName());
+			setParties(votingPaper.getParties());
+			setType(votingPaper.getType());
+		} else {
+			StringBuilder found = new StringBuilder();
+			if (groups != null && votingPaper.getGroups() != null)
+				groups.forEach(group -> {
+					votingPaper.getGroups().forEach(postGroup -> {
+						if (group.getId() == postGroup.getId()) {
+							if (user.getIncome() == group.getId()) {
+								group.setImage(postGroup.getImage());
+								group.setName(postGroup.getName());
+								group.setParties(postGroup.getParties());
+								group.setSubtitle(postGroup.getSubtitle());
+							} else
+								group.add(postGroup, user);
+							found.append(true);
+						}
+					});
+				});
+			if (found.length() == 0 && parties != null && votingPaper.getParties() != null)
+				parties.forEach(party -> {
+					votingPaper.getParties().forEach(postParty -> {
+						if (party.getId() == postParty.getId())
+							if (user.getIncome() == party.getId())
+								parties.add(postParty);
+							else
+								party.add(postParty, user);
+					});
+				});
+		}
+	}
+
 	@Override
-	public boolean validate(VotingPapers remoteVotingPapers) {
-		boolean result = super.validate(remoteVotingPapers);
+	public boolean validate(VotingPapers remoteVotingPapers, User user) {
+		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && (color == null || color.isEmpty() || color.length() != 6 || color.startsWith("#")))
 			result = false;
 		if (result && (type == null || type.isEmpty() || !hasType()))
 			result = false;
 		if (result && groups != null)
-			result = groups.parallelStream().allMatch(group -> group.validate(remoteVotingPapers));
+			result = groups.parallelStream().allMatch(group -> group.validate(remoteVotingPapers, user));
 		if (result && parties != null)
 			if (groups != null)
 				result = false;
 			else
-				result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers));
+				result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers, user));
 		if (result && parties != null)
-			result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers));
+			result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers, user));
 		if (result && groups != null && type != null && type.equals(LITTLE_NOGROUP.asString()))
 			result = false;
 		return result;

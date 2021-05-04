@@ -2,6 +2,8 @@ package it.vige.labs.gc.bean.votingpapers;
 
 import java.util.List;
 
+import it.vige.labs.gc.users.User;
+
 public class Party extends Validation {
 
 	private String image;
@@ -24,11 +26,27 @@ public class Party extends Validation {
 		this.candidates = candidates;
 	}
 
+	public void add(Party party, User user) {
+		if (user.getIncome() == getId()) {
+			setCandidates(party.getCandidates());
+			setImage(party.getImage());
+			setName(party.getName());
+		} else {
+			if (candidates != null && party.getCandidates() != null)
+				candidates.forEach(candidate -> {
+					party.getCandidates().forEach(postCandidate -> {
+						if (candidate.getId() == postCandidate.getId())
+							candidate.add(postCandidate, user);
+					});
+				});
+		}
+	}
+
 	@Override
-	public boolean validate(VotingPapers remoteVotingPapers) {
-		boolean result = super.validate(remoteVotingPapers);
+	public boolean validate(VotingPapers remoteVotingPapers, User user) {
+		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && candidates != null) {
-			result = candidates.parallelStream().allMatch(candidate -> candidate.validate(remoteVotingPapers));
+			result = candidates.parallelStream().allMatch(candidate -> candidate.validate(remoteVotingPapers, user));
 			VotingPaper remoteVotingPaper = findById(remoteVotingPapers);
 			if (remoteVotingPaper.getMaxCandidates() > candidates.size())
 				result = false;

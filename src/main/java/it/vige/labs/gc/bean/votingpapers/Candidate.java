@@ -3,6 +3,8 @@ package it.vige.labs.gc.bean.votingpapers;
 import static it.vige.labs.gc.rest.Sex.F;
 import static it.vige.labs.gc.rest.Sex.M;
 
+import it.vige.labs.gc.users.User;
+
 public class Candidate extends Validation {
 
 	private String image;
@@ -25,9 +27,17 @@ public class Candidate extends Validation {
 		this.sex = sex;
 	}
 
+	public void add(Candidate candidate, User user) {
+		if (user.getIncome() == getId()) {
+			setImage(candidate.getImage());
+			setName(candidate.getName());
+			setSex(candidate.getSex());
+		}
+	}
+
 	@Override
-	public boolean validate(VotingPapers remoteVotingPapers) {
-		boolean result = super.validate(remoteVotingPapers);
+	public boolean validate(VotingPapers remoteVotingPapers, User user) {
+		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && !name.trim().contains(" "))
 			result = false;
 		if (result && sex != M.asChar() && sex != F.asChar())

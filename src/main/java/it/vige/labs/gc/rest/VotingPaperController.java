@@ -34,6 +34,7 @@ import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.users.Authorities;
+import it.vige.labs.gc.users.User;
 import it.vige.labs.gc.websocket.WebSocketClient;
 
 @RestController
@@ -72,26 +73,31 @@ public class VotingPaperController {
 
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
-		if (getVotingPapers().getState() == PREPARE && (authorities.hasRole(ADMIN_ROLE) || authorities.hasAttributes()))
-			return addVotingPapers(postVotingPapers);
+		User user = authorities.getUser();
+		if (getVotingPapers().getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasAttributes()))
+			return addVotingPapers(postVotingPapers, user);
 		else
 			return errorMessage;
 	}
 
 	@PostMapping(value = "/import")
 	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
-		if (getVotingPapers().getState() == PREPARE && (authorities.hasRole(ADMIN_ROLE) || authorities.hasAttributes())) {
+		User user = authorities.getUser();
+		if (getVotingPapers().getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasAttributes())) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
-			return addVotingPapers(postVotingPapers);
+			return addVotingPapers(postVotingPapers, user);
 		} else
 			return errorMessage;
 	}
 
-	private Messages addVotingPapers(VotingPapers postVotingPapers) throws Exception {
-		Messages messages = validator.validate(postVotingPapers);
+	private Messages addVotingPapers(VotingPapers postVotingPapers, User user) throws Exception {
+		Messages messages = validator.validate(postVotingPapers, user);
 		if (messages.isOk()) {
-			votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+			if (!user.hasRole(ADMIN_ROLE))
+				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers(), user);
+			else
+				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
 			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
 		}
 		return messages;
