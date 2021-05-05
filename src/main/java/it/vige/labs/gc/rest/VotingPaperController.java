@@ -2,7 +2,7 @@ package it.vige.labs.gc.rest;
 
 import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
-import static it.vige.labs.gc.rest.Type.BIGGER;
+import static it.vige.labs.gc.rest.Type.LITTLE;
 import static it.vige.labs.gc.rest.Validator.defaultMessage;
 import static it.vige.labs.gc.rest.Validator.errorMessage;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
@@ -119,7 +119,7 @@ public class VotingPaperController {
 				List<VotingPaper> pages = new ArrayList<VotingPaper>();
 				VotingPaper page = new VotingPaper();
 				page.setName("VOTA");
-				page.setType(BIGGER.asString());
+				page.setType(LITTLE.asString());
 				String color = format("%02x%02x%02x", PINK.getRed(), PINK.getGreen(), PINK.getBlue());
 				page.setColor(color);
 				page.setGroups(new ArrayList<Group>());
