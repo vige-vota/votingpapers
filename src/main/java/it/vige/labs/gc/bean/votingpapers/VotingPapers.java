@@ -25,7 +25,7 @@ public class VotingPapers {
 		this.votingPapers.forEach(votingPaper -> {
 			votingPapers.forEach(postVotingPaper -> {
 				if (votingPaper.getId() == postVotingPaper.getId())
-					votingPaper.add(postVotingPaper, user);
+					votingPaper.update(postVotingPaper, user);
 			});
 		});
 	}

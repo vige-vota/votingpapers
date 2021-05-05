@@ -4,7 +4,7 @@ import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 
 import it.vige.labs.gc.users.User;
 
-public class Validation extends Identifier {
+public abstract class Validation extends Identifier {
 
 	public static final int IMAGE_SIZE = 60000;
 

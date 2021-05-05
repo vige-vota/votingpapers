@@ -27,8 +27,10 @@ public class Candidate extends Validation {
 		this.sex = sex;
 	}
 
-	public void add(Candidate candidate, User user) {
+	@Override
+	public void update(Identifier identifier, User user) {
 		if (user.getBlock() == getId()) {
+			Candidate candidate = (Candidate) identifier;
 			setImage(candidate.getImage());
 			setName(candidate.getName());
 			setSex(candidate.getSex());

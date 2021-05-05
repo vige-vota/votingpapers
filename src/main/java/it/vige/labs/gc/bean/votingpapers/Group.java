@@ -36,7 +36,9 @@ public class Group extends Validation {
 		this.subtitle = subtitle;
 	}
 
-	public void add(Group group, User user) {
+	@Override
+	public void update(Identifier identifier, User user) {
+		Group group = (Group) identifier;
 		if (user.getBlock() == getId()) {
 			setImage(group.getImage());
 			setName(group.getName());
@@ -47,7 +49,7 @@ public class Group extends Validation {
 				parties.forEach(party -> {
 					group.getParties().forEach(postParty -> {
 						if (party.getId() == postParty.getId())
-							party.add(postParty, user);
+							party.update(postParty, user);
 					});
 				});
 		}

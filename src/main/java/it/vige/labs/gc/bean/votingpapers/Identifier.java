@@ -1,5 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import it.vige.labs.gc.users.User;
+
 public abstract class Identifier {
 
 	protected int id;
@@ -21,5 +23,7 @@ public abstract class Identifier {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	public abstract void update(Identifier identifier, User user);
+
 }

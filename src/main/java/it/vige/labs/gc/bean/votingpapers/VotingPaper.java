@@ -71,7 +71,9 @@ public class VotingPaper extends Validation {
 		this.parties = parties;
 	}
 
-	public void add(VotingPaper votingPaper, User user) {
+	@Override
+	public void update(Identifier identifier, User user) {
+		VotingPaper votingPaper = (VotingPaper) identifier;
 		if (user.getBlock() == getId()) {
 			setColor(votingPaper.getColor());
 			setDisjointed(votingPaper.isDisjointed());
@@ -92,7 +94,7 @@ public class VotingPaper extends Validation {
 								group.setParties(postGroup.getParties());
 								group.setSubtitle(postGroup.getSubtitle());
 							} else
-								group.add(postGroup, user);
+								group.update(postGroup, user);
 							found.append(true);
 						}
 					});
@@ -104,7 +106,7 @@ public class VotingPaper extends Validation {
 							if (user.getBlock() == party.getId())
 								parties.add(postParty);
 							else
-								party.add(postParty, user);
+								party.update(postParty, user);
 					});
 				});
 		}

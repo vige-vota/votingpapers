@@ -26,7 +26,9 @@ public class Party extends Validation {
 		this.candidates = candidates;
 	}
 
-	public void add(Party party, User user) {
+	@Override
+	public void update(Identifier identifier, User user) {
+		Party party = (Party) identifier;
 		if (user.getBlock() == getId()) {
 			setCandidates(party.getCandidates());
 			setImage(party.getImage());
@@ -36,7 +38,7 @@ public class Party extends Validation {
 				candidates.forEach(candidate -> {
 					party.getCandidates().forEach(postCandidate -> {
 						if (candidate.getId() == postCandidate.getId())
-							candidate.add(postCandidate, user);
+							candidate.update(postCandidate, user);
 					});
 				});
 		}
