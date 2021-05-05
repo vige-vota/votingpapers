@@ -2,6 +2,7 @@ package it.vige.labs.gc;
 
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.bean.votingpapers.Validation.IMAGE_SIZE;
+import static it.vige.labs.gc.rest.Sex.M;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static it.vige.labs.gc.users.Authorities.CITIZEN_ROLE;
 import static java.util.Arrays.asList;
@@ -73,7 +74,7 @@ public class VotingPaperTest {
 		assertEquals(4, list.size(), "size ok");
 		logger.info(list + "");
 
-		mockUsers("100");
+		mockUsers(100);
 		votingPapers = new VotingPapers();
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "you must be admin or to have attributes");
@@ -202,7 +203,7 @@ public class VotingPaperTest {
 	public void votingPaperCitizen() throws Exception {
 		VotingPapers currentVotingPapers = votingPaperController.getVotingPapers();
 
-		mockUsers("100");
+		mockUsers(100);
 		VotingPapers votingPapers = new VotingPapers();
 		votingPapers.setState(PREPARE);
 		VotingPaper votingPaper = new VotingPaper();
@@ -260,7 +261,7 @@ public class VotingPaperTest {
 				});
 		});
 
-		mockUsers("101");
+		mockUsers(101);
 		party.setName("new party name 2");
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "update is executed");
@@ -276,13 +277,45 @@ public class VotingPaperTest {
 					});
 				});
 		});
+
+		mockUsers(132);
+		votingPaper.setId(121);
+		votingPaper.setGroups(null);
+		votingPaper.setParties(new ArrayList<Party>());
+		votingPaper.getParties().add(party);
+		party.setId(123);
+		party.setName("new party name");
+		party.setCandidates(new ArrayList<Candidate>());
+		Candidate candidate = new Candidate();
+		candidate.setId(132);
+		candidate.setSex(M.asChar());
+		candidate.setName("new candidate name");
+		party.getCandidates().add(candidate);
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertTrue(messages.isOk(), "update is executed");
+		currentVotingPapers = votingPaperController.getVotingPapers();
+		currentVotingPapers.getVotingPapers().forEach(vPaper -> {
+			if (vPaper.getParties() != null)
+				vPaper.getParties().forEach(pr -> {
+					if (pr.getId() == party.getId()) {
+						assertFalse(party.getName().equals(pr.getName()),
+								"Party was not updated because the user is not authorized to update the party number 123");
+					}
+					pr.getCandidates().forEach(ca -> {
+						if (ca.getId() == candidate.getId()) {
+							assertTrue(candidate.getName().equals(ca.getName()),
+									"Candidate was updated because the user is authorized to update the candidate number 132");
+						}
+					});
+				});
+		});
 	}
 
-	private void mockUsers(String income) {
+	private void mockUsers(int income) {
 		UserRepresentation user = new UserRepresentation();
 		user.setUsername(DEFAULT_USER);
 		Map<String, List<String>> attributes = new HashMap<String, List<String>>();
-		attributes.put("income", asList(new String[] { income }));
+		attributes.put("income", asList(new String[] { income + "" }));
 		user.setAttributes(attributes);
 		when(restTemplate.exchange(authorities.getFindUserByIdURI(DEFAULT_USER).toString(), GET, null,
 				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));
