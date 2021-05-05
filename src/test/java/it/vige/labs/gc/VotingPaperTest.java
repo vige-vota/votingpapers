@@ -3,6 +3,8 @@ package it.vige.labs.gc;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 import static it.vige.labs.gc.bean.votingpapers.Validation.IMAGE_SIZE;
 import static it.vige.labs.gc.rest.Sex.M;
+import static it.vige.labs.gc.rest.Type.BIGGER;
+import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static it.vige.labs.gc.users.Authorities.CITIZEN_ROLE;
 import static java.util.Arrays.asList;
@@ -42,7 +44,6 @@ import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.rest.Sex;
-import it.vige.labs.gc.rest.Type;
 import it.vige.labs.gc.rest.VotingPaperController;
 import it.vige.labs.gc.users.Authorities;
 
@@ -104,7 +105,7 @@ public class VotingPaperTest {
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "the type must be one of the types described in the Type enum");
 
-		votingPaper.setType(Type.BIGGER.asString());
+		votingPaper.setType(BIGGER.asString());
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "The BIGGER template need the zone");
 
@@ -139,7 +140,7 @@ public class VotingPaperTest {
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "image is under the " + IMAGE_SIZE + " bytes");
 
-		votingPaper.setType(Type.LITTLE_NOGROUP.asString());
+		votingPaper.setType(LITTLE_NOGROUP.asString());
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "the little-nogroup type cannot have groups");
 
@@ -154,7 +155,7 @@ public class VotingPaperTest {
 		assertFalse(messages.isOk(), "the id is duplicate");
 
 		party.setId(2);
-		votingPaper.setType(Type.BIGGER.asString());
+		votingPaper.setType(BIGGER.asString());
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "the id is ok");
 
@@ -214,7 +215,7 @@ public class VotingPaperTest {
 		votingPapers.setVotingPapers(new ArrayList<VotingPaper>(asList(new VotingPaper[] { votingPaper })));
 		votingPaper.setName("My first voting paper");
 		votingPaper.setColor("ff0055");
-		votingPaper.setType(Type.BIGGER.asString());
+		votingPaper.setType(BIGGER.asString());
 		votingPaper.setZone(6536724);
 
 		List<Group> groups = new ArrayList<Group>();
