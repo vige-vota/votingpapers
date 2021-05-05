@@ -109,7 +109,7 @@ public class VotingPaperTest {
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "The BIGGER template need the zone");
 
-		votingPaper.setZone(6536724);
+		votingPaper.setZone(6542276);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "mandatory fields are ok");
 
@@ -216,7 +216,7 @@ public class VotingPaperTest {
 		votingPaper.setName("My first voting paper");
 		votingPaper.setColor("ff0055");
 		votingPaper.setType(BIGGER.asString());
-		votingPaper.setZone(6536724);
+		votingPaper.setZone(6542276);
 
 		List<Group> groups = new ArrayList<Group>();
 		Group group = new Group();

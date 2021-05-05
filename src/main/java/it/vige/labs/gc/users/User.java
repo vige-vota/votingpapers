@@ -62,7 +62,7 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
-	public boolean hasAttributes() {
+	public boolean hasBlock() {
 		return getBlock() != -1;
 	}
 
