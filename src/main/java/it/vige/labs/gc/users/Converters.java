@@ -19,13 +19,13 @@ public interface Converters {
 			user.setSurname(t.getLastName());
 			Map<String, List<String>> attributes = t.getAttributes();
 			if (attributes != null) {
-				List<String> incomes = attributes.get("income");
-				String incomeStr = "";
-				if (incomes != null) {
-					incomeStr = incomes.get(0);
-					if (incomeStr != null && !incomeStr.isEmpty()) {
-						int income = parseInt(incomeStr);
-						user.setIncome(income);
+				List<String> blocks = attributes.get("block");
+				String blockStr = "";
+				if (blocks != null) {
+					blockStr = blocks.get(0);
+					if (blockStr != null && !blockStr.isEmpty()) {
+						int block = parseInt(blockStr);
+						user.setBlock(block);
 					}
 				}
 			}

@@ -27,7 +27,7 @@ public class Party extends Validation {
 	}
 
 	public void add(Party party, User user) {
-		if (user.getIncome() == getId()) {
+		if (user.getBlock() == getId()) {
 			setCandidates(party.getCandidates());
 			setImage(party.getImage());
 			setName(party.getName());

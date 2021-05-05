@@ -37,7 +37,7 @@ public class Group extends Validation {
 	}
 
 	public void add(Group group, User user) {
-		if (user.getIncome() == getId()) {
+		if (user.getBlock() == getId()) {
 			setImage(group.getImage());
 			setName(group.getName());
 			setParties(group.getParties());

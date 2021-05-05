@@ -72,7 +72,7 @@ public class VotingPaper extends Validation {
 	}
 
 	public void add(VotingPaper votingPaper, User user) {
-		if (user.getIncome() == getId()) {
+		if (user.getBlock() == getId()) {
 			setColor(votingPaper.getColor());
 			setDisjointed(votingPaper.isDisjointed());
 			setGroups(votingPaper.getGroups());
@@ -86,7 +86,7 @@ public class VotingPaper extends Validation {
 				groups.forEach(group -> {
 					votingPaper.getGroups().forEach(postGroup -> {
 						if (group.getId() == postGroup.getId()) {
-							if (user.getIncome() == group.getId()) {
+							if (user.getBlock() == group.getId()) {
 								group.setImage(postGroup.getImage());
 								group.setName(postGroup.getName());
 								group.setParties(postGroup.getParties());
@@ -101,7 +101,7 @@ public class VotingPaper extends Validation {
 				parties.forEach(party -> {
 					votingPaper.getParties().forEach(postParty -> {
 						if (party.getId() == postParty.getId())
-							if (user.getIncome() == party.getId())
+							if (user.getBlock() == party.getId())
 								parties.add(postParty);
 							else
 								party.add(postParty, user);

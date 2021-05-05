@@ -28,7 +28,7 @@ public class Candidate extends Validation {
 	}
 
 	public void add(Candidate candidate, User user) {
-		if (user.getIncome() == getId()) {
+		if (user.getBlock() == getId()) {
 			setImage(candidate.getImage());
 			setName(candidate.getName());
 			setSex(candidate.getSex());

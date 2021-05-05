@@ -10,7 +10,7 @@ public class Validation extends Identifier {
 
 	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = false;
-		if (user.hasRole(ADMIN_ROLE) || user.getIncome() == id) {
+		if (user.hasRole(ADMIN_ROLE) || user.getBlock() == id) {
 			if (name != null && !name.isEmpty() && !duplicate(id, remoteVotingPapers))
 				result = true;
 		} else

@@ -18,7 +18,7 @@ public class User implements Serializable {
 
 	private String surname;
 
-	private int income;
+	private int block;
 
 	private Collection<? extends GrantedAuthority> roles;
 
@@ -46,12 +46,12 @@ public class User implements Serializable {
 		this.surname = surname;
 	}
 
-	public int getIncome() {
-		return income;
+	public int getBlock() {
+		return block;
 	}
 
-	public void setIncome(int income) {
-		this.income = income;
+	public void setBlock(int block) {
+		this.block = block;
 	}
 
 	public Collection<? extends GrantedAuthority> getRoles() {
@@ -63,7 +63,7 @@ public class User implements Serializable {
 	}
 
 	public boolean hasAttributes() {
-		return getIncome() != -1;
+		return getBlock() != -1;
 	}
 
 	public boolean hasRole(String... role) {

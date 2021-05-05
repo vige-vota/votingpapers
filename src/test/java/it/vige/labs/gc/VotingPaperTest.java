@@ -311,11 +311,11 @@ public class VotingPaperTest {
 		});
 	}
 
-	private void mockUsers(int income) {
+	private void mockUsers(int block) {
 		UserRepresentation user = new UserRepresentation();
 		user.setUsername(DEFAULT_USER);
 		Map<String, List<String>> attributes = new HashMap<String, List<String>>();
-		attributes.put("income", asList(new String[] { income + "" }));
+		attributes.put("block", asList(new String[] { block + "" }));
 		user.setAttributes(attributes);
 		when(restTemplate.exchange(authorities.getFindUserByIdURI(DEFAULT_USER).toString(), GET, null,
 				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));
