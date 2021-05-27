@@ -38,6 +38,12 @@ public class Candidate extends Validation {
 	}
 
 	@Override
+	public boolean hasBlock(User user) {
+		int block = user.getBlock();
+		return block == -1 || id == block;
+	}
+
+	@Override
 	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && !name.trim().contains(" "))

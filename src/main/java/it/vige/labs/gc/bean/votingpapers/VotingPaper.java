@@ -124,6 +124,14 @@ public class VotingPaper extends Validation {
 	}
 
 	@Override
+	public boolean hasBlock(User user) {
+		int block = user.getBlock();
+		return block == -1 || id == block
+				|| (groups != null && groups.parallelStream().anyMatch(group -> group.hasBlock(user)))
+				|| (parties != null && parties.parallelStream().anyMatch(group -> group.hasBlock(user)));
+	}
+
+	@Override
 	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && (color == null || color.isEmpty() || color.length() != 6 || color.startsWith("#")))

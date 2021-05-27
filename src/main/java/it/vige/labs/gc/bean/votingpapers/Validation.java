@@ -17,6 +17,8 @@ public abstract class Validation extends Identifier {
 			result = true;
 		return result;
 	};
+	
+	public abstract boolean hasBlock(User user);
 
 	private boolean duplicate(int id, VotingPapers remoteVotingPapers) {
 		int result = 0;

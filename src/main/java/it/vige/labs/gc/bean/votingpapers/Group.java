@@ -56,6 +56,13 @@ public class Group extends Validation {
 	}
 
 	@Override
+	public boolean hasBlock(User user) {
+		int block = user.getBlock();
+		return block == -1 || id == block
+				|| (parties != null && parties.parallelStream().anyMatch(group -> group.hasBlock(user)));
+	}
+
+	@Override
 	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && parties != null)

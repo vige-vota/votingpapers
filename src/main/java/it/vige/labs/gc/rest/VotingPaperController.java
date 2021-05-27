@@ -74,7 +74,7 @@ public class VotingPaperController {
 			User user = authorities.getUser();
 			localVotingPapers
 					.setVotingPapers(localVotingPapers.getVotingPapers().parallelStream().filter(votingPaper -> {
-						return isInZone(votingPaper.getZone(), user);
+						return isValid(votingPaper, user);
 					}).collect(toList()));
 			return localVotingPapers;
 		}
@@ -110,8 +110,14 @@ public class VotingPaperController {
 			return errorMessage;
 	}
 
-	private boolean isInZone(int zone, User user) {
-		return zone == -1 || user.getZones().contains(zone);
+	private boolean isValid(VotingPaper votingPaper, User user) {
+		State state = votingPapers.getState();
+		if (state == PREPARE) {
+			return votingPaper.hasBlock(user);
+		} else {
+			int zone = votingPaper.getZone();
+			return zone == -1 || user.getZones().contains(zone);
+		}
 	}
 
 	private Messages addVotingPapers(VotingPapers postVotingPapers, User user) throws Exception {
