@@ -8,6 +8,7 @@ import static it.vige.labs.gc.rest.Validator.errorMessage;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.awt.Color.PINK;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,7 +42,7 @@ import it.vige.labs.gc.websocket.WebSocketClient;
 @CrossOrigin(origins = "*")
 public class VotingPaperController {
 
-	public final static VotingPapers votingPapers = new VotingPapers();
+	private VotingPapers votingPapers = new VotingPapers();
 
 	@Autowired
 	private WebSocketClient webSocketClient;
@@ -59,6 +60,24 @@ public class VotingPaperController {
 	public VotingPapers getVotingPapers() {
 		String[] profiles = environment.getActiveProfiles();
 		return generateVotingPapers(profiles);
+	}
+
+	@GetMapping(value = "/votingPapersByUser")
+	public VotingPapers getVotingPapersByUser() throws Exception {
+		VotingPapers votingPapers = getVotingPapers();
+		VotingPapers localVotingPapers = new VotingPapers();
+		localVotingPapers.setVotingPapers(votingPapers.getVotingPapers());
+		localVotingPapers.setState(votingPapers.getState());
+		if (authorities.hasRole(ADMIN_ROLE))
+			return localVotingPapers;
+		else {
+			User user = authorities.getUser();
+			localVotingPapers
+					.setVotingPapers(localVotingPapers.getVotingPapers().parallelStream().filter(votingPaper -> {
+						return isInZone(votingPaper.getZone(), user);
+					}).collect(toList()));
+			return localVotingPapers;
+		}
 	}
 
 	@GetMapping(value = "/state")
@@ -91,6 +110,10 @@ public class VotingPaperController {
 			return errorMessage;
 	}
 
+	private boolean isInZone(int zone, User user) {
+		return zone == -1 || user.getZones().contains(zone);
+	}
+
 	private Messages addVotingPapers(VotingPapers postVotingPapers, User user) throws Exception {
 		Messages messages = validator.validate(postVotingPapers, user);
 		if (messages.isOk()) {
@@ -103,7 +126,7 @@ public class VotingPaperController {
 		return messages;
 	}
 
-	public static VotingPapers generateVotingPapers(String[] profiles) {
+	private VotingPapers generateVotingPapers(String[] profiles) {
 		if (votingPapers.getVotingPapers().size() == 0) {
 			if (profiles.length == 0 || profiles[0].equals("dev")) {
 				ObjectMapper objectMapper = new ObjectMapper();

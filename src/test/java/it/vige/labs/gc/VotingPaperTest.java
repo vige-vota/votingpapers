@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static java.util.stream.Collectors.*;
 
 import org.junit.jupiter.api.Test;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -75,7 +76,7 @@ public class VotingPaperTest {
 		assertEquals(4, list.size(), "size ok");
 		logger.info(list + "");
 
-		mockUsers(100);
+		mockUsers(100, 6542276, 2523962, 2523228, 4);
 		votingPapers = new VotingPapers();
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "you must be admin or to have attributes");
@@ -208,7 +209,7 @@ public class VotingPaperTest {
 	public void votingPaperCitizen() throws Exception {
 		VotingPapers currentVotingPapers = votingPaperController.getVotingPapers();
 
-		mockUsers(100);
+		mockUsers(100, 6542276, 2523962, 2523228, 4);
 		VotingPapers votingPapers = new VotingPapers();
 		votingPapers.setState(PREPARE);
 		VotingPaper votingPaper = new VotingPaper();
@@ -267,7 +268,7 @@ public class VotingPaperTest {
 				});
 		});
 
-		mockUsers(101);
+		mockUsers(37, 6542276, 2523962, 2523228, 4);
 		party.setName("new party name 2");
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "update is executed");
@@ -284,7 +285,7 @@ public class VotingPaperTest {
 				});
 		});
 
-		mockUsers(132);
+		mockUsers(132, 6536811, 3174529, 3165361, 2);
 		votingPaper.setId(121);
 		votingPaper.setGroups(null);
 		votingPaper.setParties(new ArrayList<Party>());
@@ -315,13 +316,15 @@ public class VotingPaperTest {
 					});
 				});
 		});
+		currentVotingPapers = votingPaperController.getVotingPapersByUser();
 	}
 
-	private void mockUsers(int block) {
+	private void mockUsers(int block, Integer... zones) {
 		UserRepresentation user = new UserRepresentation();
 		user.setUsername(DEFAULT_USER);
 		Map<String, List<String>> attributes = new HashMap<String, List<String>>();
 		attributes.put("block", asList(new String[] { block + "" }));
+		attributes.put("zones", asList(zones).parallelStream().map(zone -> zone + "").collect(toList()));
 		user.setAttributes(attributes);
 		when(restTemplate.exchange(authorities.getFindUserByIdURI(DEFAULT_USER).toString(), GET, null,
 				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));

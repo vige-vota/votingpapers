@@ -20,6 +20,8 @@ public class User implements Serializable {
 
 	private int block;
 
+	private List<Integer> zones;
+
 	private Collection<? extends GrantedAuthority> roles;
 
 	public String getId() {
@@ -54,6 +56,14 @@ public class User implements Serializable {
 		this.block = block;
 	}
 
+	public List<Integer> getZones() {
+		return zones;
+	}
+
+	public void setZones(List<Integer> zones) {
+		this.zones = zones;
+	}
+
 	public Collection<? extends GrantedAuthority> getRoles() {
 		return roles;
 	}
@@ -69,6 +79,10 @@ public class User implements Serializable {
 	public boolean hasRole(String... role) {
 		List<String> rolesTocompare = asList(role);
 		return roles.parallelStream().anyMatch(r -> rolesTocompare.contains(r.getAuthority()));
+	}
+	
+	public boolean isInZone(int zone) {
+		return true;
 	}
 
 	@Override
