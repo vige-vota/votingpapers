@@ -23,6 +23,8 @@ import org.springframework.web.util.UriComponents;
 @Component
 public class Authorities implements Serializable, Converters {
 
+	private final static String ANONYMOUS_USER = "anonymousUser";
+
 	public final static String ADMIN_ROLE = "ROLE_ADMIN";
 
 	public final static String CITIZEN_ROLE = "ROLE_CITIZEN";
@@ -42,6 +44,11 @@ public class Authorities implements Serializable, Converters {
 		List<String> roles = asList(role);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return authentication.getAuthorities().parallelStream().anyMatch(r -> roles.contains(r.getAuthority()));
+	}
+
+	public boolean isAnonymous() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return authentication.getName().equals(ANONYMOUS_USER);
 	}
 
 	public User getUser() throws ModuleException {

@@ -207,7 +207,6 @@ public class VotingPaperTest {
 	@Test
 	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
 	public void votingPaperCitizen() throws Exception {
-		VotingPapers currentVotingPapers = votingPaperController.getVotingPapers();
 
 		mockUsers(100, 6542276, 2523962, 2523228, 4);
 		VotingPapers votingPapers = new VotingPapers();
@@ -234,7 +233,7 @@ public class VotingPaperTest {
 		Messages messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "schede code not in the user properties, so no group is updated");
 
-		currentVotingPapers = votingPaperController.getVotingPapers();
+		VotingPapers currentVotingPapers = votingPaperController.getVotingPapers();
 		currentVotingPapers.getVotingPapers().forEach(vPaper -> {
 			if (vPaper.getGroups() != null)
 				vPaper.getGroups().forEach(gr -> {
@@ -316,7 +315,6 @@ public class VotingPaperTest {
 					});
 				});
 		});
-		currentVotingPapers = votingPaperController.getVotingPapersByUser();
 	}
 
 	private void mockUsers(int block, Integer... zones) {

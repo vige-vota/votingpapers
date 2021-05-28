@@ -56,19 +56,18 @@ public class VotingPaperController {
 	@Autowired
 	private Environment environment;
 
-	@GetMapping(value = "/votingPapers")
-	public VotingPapers getVotingPapers() {
+	public VotingPapers getAllVotingPapers() {
 		String[] profiles = environment.getActiveProfiles();
 		return generateVotingPapers(profiles);
 	}
 
-	@GetMapping(value = "/votingPapersByUser")
-	public VotingPapers getVotingPapersByUser() throws Exception {
-		VotingPapers votingPapers = getVotingPapers();
+	@GetMapping(value = "/votingPapers")
+	public VotingPapers getVotingPapers() throws Exception {
+		VotingPapers votingPapers = getAllVotingPapers();
 		VotingPapers localVotingPapers = new VotingPapers();
 		localVotingPapers.setVotingPapers(votingPapers.getVotingPapers());
 		localVotingPapers.setState(votingPapers.getState());
-		if (authorities.hasRole(ADMIN_ROLE))
+		if (authorities.hasRole(ADMIN_ROLE) || authorities.isAnonymous())
 			return localVotingPapers;
 		else {
 			User user = authorities.getUser();
