@@ -29,8 +29,8 @@ public class Party extends Validation {
 	@Override
 	public boolean hasBlock(User user) {
 		int block = user.getBlock();
-		return block == -1 || id == block
-				|| (candidates != null && candidates.parallelStream().anyMatch(group -> group.hasBlock(user)));
+		return block != -1 && (id == block
+				|| (candidates != null && candidates.parallelStream().anyMatch(group -> group.hasBlock(user))));
 	}
 
 	@Override

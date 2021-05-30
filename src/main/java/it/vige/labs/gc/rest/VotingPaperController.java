@@ -67,6 +67,7 @@ public class VotingPaperController {
 		VotingPapers localVotingPapers = new VotingPapers();
 		localVotingPapers.setVotingPapers(votingPapers.getVotingPapers());
 		localVotingPapers.setState(votingPapers.getState());
+		localVotingPapers.setNextId(votingPapers.getNextId());
 		if (authorities.hasRole(ADMIN_ROLE) || authorities.isAnonymous())
 			return localVotingPapers;
 		else {
@@ -122,10 +123,12 @@ public class VotingPaperController {
 	private Messages addVotingPapers(VotingPapers postVotingPapers, User user) throws Exception {
 		Messages messages = validator.validate(postVotingPapers, user);
 		if (messages.isOk()) {
-			if (!user.hasRole(ADMIN_ROLE))
+			votingPapers.addNewIds(postVotingPapers, votingPapers, user);
+			if (!user.hasRole(ADMIN_ROLE)) {
 				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers(), user);
-			else
+			} else {
 				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
+			}
 			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
 		}
 		return messages;
@@ -140,6 +143,7 @@ public class VotingPaperController {
 					VotingPapers votingPapersFromJson = objectMapper.readValue(jsonStream, VotingPapers.class);
 					votingPapers.setVotingPapers(votingPapersFromJson.getVotingPapers());
 					votingPapers.setState(votingPapersFromJson.getState());
+					votingPapers.setNextId(votingPapersFromJson.getNextId());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -154,6 +158,7 @@ public class VotingPaperController {
 				pages.add(page);
 				votingPapers.setVotingPapers(pages);
 				votingPapers.setState(PREPARE);
+				votingPapers.setNextId(1);
 			}
 		}
 		return votingPapers;

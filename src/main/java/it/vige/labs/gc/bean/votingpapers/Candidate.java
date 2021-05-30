@@ -40,7 +40,7 @@ public class Candidate extends Validation {
 	@Override
 	public boolean hasBlock(User user) {
 		int block = user.getBlock();
-		return block == -1 || id == block;
+		return block != -1 && id == block;
 	}
 
 	@Override
