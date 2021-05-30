@@ -124,11 +124,10 @@ public class VotingPaperController {
 		Messages messages = validator.validate(postVotingPapers, user);
 		if (messages.isOk()) {
 			votingPapers.addNewIds(postVotingPapers, votingPapers, user);
-			if (!user.hasRole(ADMIN_ROLE)) {
+			if (!user.hasRole(ADMIN_ROLE))
 				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers(), user);
-			} else {
+			else
 				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers());
-			}
 			webSocketClient.getStompSession().send(TOPIC_NAME, votingPapers);
 		}
 		return messages;
