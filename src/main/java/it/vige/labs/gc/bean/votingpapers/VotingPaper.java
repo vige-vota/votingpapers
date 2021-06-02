@@ -99,13 +99,7 @@ public class VotingPaper extends Validation {
 				groups.forEach(group -> {
 					votingPaper.getGroups().forEach(postGroup -> {
 						if (group.getId() == postGroup.getId()) {
-							if (user.getBlock() == group.getId()) {
-								group.setImage(postGroup.getImage());
-								group.setName(postGroup.getName());
-								group.setParties(postGroup.getParties());
-								group.setSubtitle(postGroup.getSubtitle());
-							} else
-								group.update(postGroup, user);
+							group.update(postGroup, user);
 							found.append(true);
 						}
 					});
