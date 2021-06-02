@@ -2,6 +2,8 @@ package it.vige.labs.gc.bean.votingpapers;
 
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 
+import java.util.List;
+
 import it.vige.labs.gc.users.User;
 
 public abstract class Validation extends Identifier {
@@ -35,8 +37,9 @@ public abstract class Validation extends Identifier {
 				if (block == id)
 					return true;
 			}
-			if (votingPaper.getParties() != null)
-				for (Party party : votingPaper.getParties()) {
+			List<Party> parties = votingPaper.getParties();
+			if (parties != null)
+				for (Party party : parties) {
 					if (party.getId() == block) {
 						matchedParty = party;
 						if (block == id)
@@ -44,8 +47,9 @@ public abstract class Validation extends Identifier {
 					}
 					if (party.getId() == id && votingPaper == matchedVotingPaper)
 						return true;
-					if (party.getCandidates() != null)
-						for (Candidate candidate : party.getCandidates()) {
+					List<Candidate> candidates = party.getCandidates();
+					if (candidates != null)
+						for (Candidate candidate : candidates) {
 							if (candidate.getId() == block)
 								if (block == id)
 									return true;
@@ -53,8 +57,9 @@ public abstract class Validation extends Identifier {
 								return true;
 						}
 				}
-			if (votingPaper.getGroups() != null)
-				for (Group group : votingPaper.getGroups()) {
+			List<Group> groups = votingPaper.getGroups();
+			if (groups != null)
+				for (Group group : groups) {
 					if (group.getId() == block) {
 						matchedGroup = group;
 						if (block == id)
@@ -62,8 +67,9 @@ public abstract class Validation extends Identifier {
 					}
 					if (group.getId() == id && votingPaper == matchedVotingPaper)
 						return true;
-					if (group.getParties() != null)
-						for (Party party : group.getParties()) {
+					List<Party> grParties = group.getParties();
+					if (grParties != null)
+						for (Party party : grParties) {
 							if (party.getId() == block) {
 								matchedParty = party;
 								if (block == id)
@@ -71,8 +77,9 @@ public abstract class Validation extends Identifier {
 							}
 							if (party.getId() == id && (votingPaper == matchedVotingPaper || group == matchedGroup))
 								return true;
-							if (party.getCandidates() != null)
-								for (Candidate candidate : party.getCandidates()) {
+							List<Candidate> candidates = party.getCandidates();
+							if (candidates != null)
+								for (Candidate candidate : candidates) {
 									if (candidate.getId() == block)
 										if (block == id)
 											return true;
@@ -85,7 +92,7 @@ public abstract class Validation extends Identifier {
 		}
 		return false;
 	}
-	
+
 	protected abstract int duplicate(int result, int id);
 
 	private boolean duplicate(VotingPapers remoteVotingPapers) {
