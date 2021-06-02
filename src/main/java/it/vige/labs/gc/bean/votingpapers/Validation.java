@@ -8,7 +8,7 @@ public abstract class Validation extends Identifier {
 
 	public static final int IMAGE_SIZE = 60000;
 
-	public boolean validate(VotingPapers remoteVotingPapers, User user) {
+	protected boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = false;
 		if (user.hasRole(ADMIN_ROLE) || isInBlock(remoteVotingPapers, user)) {
 			if (name != null && !name.isEmpty() && !duplicate(remoteVotingPapers))
@@ -18,9 +18,9 @@ public abstract class Validation extends Identifier {
 		return result;
 	};
 
-	public abstract boolean hasBlock(User user);
+	protected abstract boolean hasBlock(User user);
 
-	public boolean isInBlock(VotingPapers remoteVotingPapers, User user) {
+	protected boolean isInBlock(VotingPapers remoteVotingPapers, User user) {
 		int block = user.getBlock();
 		return block != -1 && hasId(block, remoteVotingPapers);
 	}

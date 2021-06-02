@@ -28,17 +28,17 @@ public abstract class Identifier {
 		this.name = name;
 	}
 
-	public int generateId(VotingPapers votingPapers) {
+	protected int generateId(VotingPapers votingPapers) {
 		int result = votingPapers.getNextId() + 1;
 		votingPapers.setNextId(result);
 		return result;
 	}
 
-	public void addNewIds(VotingPapers votingPapers, VotingPapers allVotingPapers, User user) {
+	protected void addNewIds(VotingPapers votingPapers, VotingPapers allVotingPapers, User user) {
 
 	}
 
-	public void addNewIds(VotingPapers votingPapers, VotingPapers allVotingPapers) {
+	protected void addNewIds(VotingPapers votingPapers, VotingPapers allVotingPapers) {
 		for (VotingPaper votingPaper : votingPapers.getVotingPapers()) {
 			if (votingPaper.getId() < 0)
 				votingPaper.setId(generateId(allVotingPapers));
@@ -73,6 +73,6 @@ public abstract class Identifier {
 		}
 	}
 
-	public abstract void update(Identifier identifier, User user);
+	protected abstract void update(Identifier identifier, User user);
 
 }
