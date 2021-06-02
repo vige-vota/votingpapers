@@ -2,7 +2,8 @@ package it.vige.labs.gc.bean.votingpapers;
 
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import it.vige.labs.gc.users.User;
 
@@ -22,74 +23,34 @@ public abstract class Validation extends Identifier {
 
 	protected abstract boolean hasBlock(User user);
 
+	protected boolean match(Validation... validation) {
+		boolean result = false;
+		for (int i = 0; i < validation.length; i = i + 2)
+			result = result || validation[i] == validation[i + 1];
+		return result;
+	}
+
 	protected boolean isInBlock(VotingPapers remoteVotingPapers, User user) {
 		int block = user.getBlock();
 		return block != -1 && hasId(block, remoteVotingPapers);
 	}
 
+	protected abstract boolean hasId(int block, int id, Map<Integer, Validation> validations);
+
 	private boolean hasId(int block, VotingPapers remoteVotingPapers) {
-		VotingPaper matchedVotingPaper = null;
-		Group matchedGroup = null;
-		Party matchedParty = null;
-		for (VotingPaper votingPaper : remoteVotingPapers.getVotingPapers()) {
-			if (votingPaper.getId() == block) {
-				matchedVotingPaper = votingPaper;
-				if (block == id)
-					return true;
-			}
-			List<Party> parties = votingPaper.getParties();
-			if (parties != null)
-				for (Party party : parties) {
-					if (party.getId() == block) {
-						matchedParty = party;
-						if (block == id)
-							return true;
-					}
-					if (party.getId() == id && votingPaper == matchedVotingPaper)
-						return true;
-					List<Candidate> candidates = party.getCandidates();
-					if (candidates != null)
-						for (Candidate candidate : candidates) {
-							if (candidate.getId() == block)
-								if (block == id)
-									return true;
-							if (candidate.getId() == id && (votingPaper == matchedVotingPaper || party == matchedParty))
-								return true;
-						}
-				}
-			List<Group> groups = votingPaper.getGroups();
-			if (groups != null)
-				for (Group group : groups) {
-					if (group.getId() == block) {
-						matchedGroup = group;
-						if (block == id)
-							return true;
-					}
-					if (group.getId() == id && votingPaper == matchedVotingPaper)
-						return true;
-					List<Party> grParties = group.getParties();
-					if (grParties != null)
-						for (Party party : grParties) {
-							if (party.getId() == block) {
-								matchedParty = party;
-								if (block == id)
-									return true;
-							}
-							if (party.getId() == id && (votingPaper == matchedVotingPaper || group == matchedGroup))
-								return true;
-							List<Candidate> candidates = party.getCandidates();
-							if (candidates != null)
-								for (Candidate candidate : candidates) {
-									if (candidate.getId() == block)
-										if (block == id)
-											return true;
-									if (candidate.getId() == id && (votingPaper == matchedVotingPaper
-											|| group == matchedGroup || party == matchedParty))
-										return true;
-								}
-						}
-				}
-		}
+		VotingPaper matchedVotingPaper = new VotingPaper();
+		Group matchedGroup = new Group();
+		Party matchedParty = new Party();
+		matchedVotingPaper.setId(-1);
+		matchedGroup.setId(-1);
+		matchedParty.setId(-1);
+		Map<Integer, Validation> validations = new HashMap<Integer, Validation>();
+		validations.put(0, matchedVotingPaper);
+		validations.put(1, matchedGroup);
+		validations.put(2, matchedParty);
+		for (VotingPaper votingPaper : remoteVotingPapers.getVotingPapers())
+			if (votingPaper.hasId(block, id, validations))
+				return true;
 		return false;
 	}
 

@@ -1,6 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
 import java.util.List;
+import java.util.Map;
 
 import it.vige.labs.gc.users.User;
 
@@ -41,9 +42,10 @@ public class Party extends Validation {
 			setImage(party.getImage());
 			setName(party.getName());
 		} else {
-			if (candidates != null && party.getCandidates() != null)
+			List<Candidate> pCandidates = party.getCandidates();
+			if (candidates != null && pCandidates != null)
 				candidates.forEach(candidate -> {
-					party.getCandidates().forEach(postCandidate -> {
+					pCandidates.forEach(postCandidate -> {
 						if (candidate.getId() == postCandidate.getId())
 							candidate.update(postCandidate, user);
 					});
@@ -74,6 +76,27 @@ public class Party extends Validation {
 			for (Candidate candidate : candidates)
 				result = candidate.duplicate(result, id);
 		return result;
+	}
+
+	@Override
+	protected boolean hasId(int block, int id, Map<Integer, Validation> validations) {
+		VotingPaper matchedVotingPaper = (VotingPaper) validations.get(0);
+		Party matchedParty = (Party) validations.get(2);
+		VotingPaper votingPaper = (VotingPaper) validations.get(3);
+		validations.put(4, this);
+		if (this.id == block) {
+			matchedParty.setId(this.id);
+			if (block == id)
+				return true;
+		}
+		if (this.id == id && match(votingPaper, matchedVotingPaper))
+			return true;
+		List<Candidate> candidates = getCandidates();
+		if (candidates != null)
+			for (Candidate candidate : candidates)
+				if (candidate.hasId(block, id, validations))
+					return true;
+		return false;
 	}
 
 	private VotingPaper findById(VotingPapers remoteVotingPapers) {

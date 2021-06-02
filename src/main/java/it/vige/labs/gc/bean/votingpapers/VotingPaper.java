@@ -6,6 +6,7 @@ import static it.vige.labs.gc.rest.Type.LITTLE;
 import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
 
 import java.util.List;
+import java.util.Map;
 
 import it.vige.labs.gc.users.User;
 
@@ -108,10 +109,7 @@ public class VotingPaper extends Validation {
 				parties.forEach(party -> {
 					votingPaper.getParties().forEach(postParty -> {
 						if (party.getId() == postParty.getId())
-							if (user.getBlock() == party.getId())
-								parties.add(postParty);
-							else
-								party.update(postParty, user);
+							party.update(postParty, user);
 					});
 				});
 		}
@@ -161,6 +159,26 @@ public class VotingPaper extends Validation {
 			for (Group group : groups)
 				result = group.duplicate(result, id);
 		return result;
+	}
+
+	@Override
+	protected boolean hasId(int block, int id, Map<Integer, Validation> validations) {
+		VotingPaper matchedVotingPaper = (VotingPaper) validations.get(0);
+		validations.put(3, this);
+		if (this.id == block) {
+			matchedVotingPaper.setId(this.id);
+			if (block == id)
+				return true;
+		}
+		if (parties != null)
+			for (Party party : parties)
+				if (party.hasId(block, id, validations))
+					return true;
+		if (groups != null)
+			for (Group group : groups)
+				if (group.hasId(block, id, validations))
+					return true;
+		return false;
 	}
 
 	private boolean hasType() {

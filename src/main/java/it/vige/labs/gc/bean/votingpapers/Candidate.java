@@ -3,6 +3,8 @@ package it.vige.labs.gc.bean.votingpapers;
 import static it.vige.labs.gc.rest.Sex.F;
 import static it.vige.labs.gc.rest.Sex.M;
 
+import java.util.Map;
+
 import it.vige.labs.gc.users.User;
 
 public class Candidate extends Validation {
@@ -60,6 +62,20 @@ public class Candidate extends Validation {
 		if (this.id == id)
 			result++;
 		return result;
+	}
+
+	@Override
+	protected boolean hasId(int block, int id, Map<Integer, Validation> validations) {
+		VotingPaper matchedVotingPaper = (VotingPaper) validations.get(0);
+		Party matchedParty = (Party) validations.get(2);
+		VotingPaper votingPaper = (VotingPaper) validations.get(3);
+		Party party = (Party) validations.get(4);
+		if (this.id == block)
+			if (block == id)
+				return true;
+		if (this.id == id && match(votingPaper, matchedVotingPaper, party, matchedParty))
+			return true;
+		return false;
 	}
 
 }
