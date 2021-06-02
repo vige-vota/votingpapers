@@ -103,14 +103,12 @@ public class Party extends Validation {
 
 	@Override
 	protected void addNewIds(VotingPapers allVotingPapers, User user) {
-		if (user.hasRole(ADMIN_ROLE)) {
-			if (getId() < 0)
-				setId(generateId(allVotingPapers));
-			List<Candidate> candidates = getCandidates();
-			if (candidates != null)
-				for (Candidate candidate : candidates)
-					candidate.addNewIds(allVotingPapers, user);
-		}
+		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
+			setId(generateId(allVotingPapers));
+		List<Candidate> candidates = getCandidates();
+		if (candidates != null)
+			for (Candidate candidate : candidates)
+				candidate.addNewIds(allVotingPapers, user);
 	}
 
 	private VotingPaper findById(VotingPapers remoteVotingPapers) {

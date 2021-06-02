@@ -81,9 +81,8 @@ public class Candidate extends Validation {
 
 	@Override
 	protected void addNewIds(VotingPapers allVotingPapers, User user) {
-		if (user.hasRole(ADMIN_ROLE))
-			if (getId() < 0)
-				setId(generateId(allVotingPapers));
+		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
+			setId(generateId(allVotingPapers));
 	}
 
 }

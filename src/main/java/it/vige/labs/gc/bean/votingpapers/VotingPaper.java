@@ -184,18 +184,16 @@ public class VotingPaper extends Validation {
 
 	@Override
 	protected void addNewIds(VotingPapers allVotingPapers, User user) {
-		if (user.hasRole(ADMIN_ROLE)) {
-			if (getId() < 0)
-				setId(generateId(allVotingPapers));
-			List<Party> parties = getParties();
-			if (parties != null)
-				for (Party party : parties)
-					party.addNewIds(allVotingPapers, user);
-			List<Group> groups = getGroups();
-			if (groups != null)
-				for (Group group : groups)
-					group.addNewIds(allVotingPapers, user);
-		}
+		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
+			setId(generateId(allVotingPapers));
+		List<Party> parties = getParties();
+		if (parties != null)
+			for (Party party : parties)
+				party.addNewIds(allVotingPapers, user);
+		List<Group> groups = getGroups();
+		if (groups != null)
+			for (Group group : groups)
+				group.addNewIds(allVotingPapers, user);
 	}
 
 	private boolean hasType() {

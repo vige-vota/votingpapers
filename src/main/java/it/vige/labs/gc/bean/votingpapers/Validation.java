@@ -26,7 +26,7 @@ public abstract class Validation extends Identifier {
 	protected boolean match(Validation... validation) {
 		boolean result = false;
 		for (int i = 0; i < validation.length; i = i + 2)
-			result = result || validation[i] == validation[i + 1];
+			result = result || validation[i].getId() == validation[i + 1].getId();
 		return result;
 	}
 
