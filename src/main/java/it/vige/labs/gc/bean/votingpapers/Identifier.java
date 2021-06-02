@@ -10,8 +10,6 @@ public abstract class Identifier {
 
 	protected String name;
 
-	protected Identifier parent;
-
 	public int getId() {
 		return id;
 	}
