@@ -123,7 +123,7 @@ public class VotingPaperController {
 	private Messages addVotingPapers(VotingPapers postVotingPapers, User user) throws Exception {
 		Messages messages = validator.validate(postVotingPapers, user);
 		if (messages.isOk()) {
-			votingPapers.addNewIds(postVotingPapers, votingPapers, user);
+			postVotingPapers.addNewIds(votingPapers, user);
 			if (!user.hasRole(ADMIN_ROLE))
 				votingPapers.setVotingPapers(postVotingPapers.getVotingPapers(), user);
 			else

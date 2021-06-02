@@ -1,5 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
+
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,7 @@ public class Party extends Validation {
 	@Override
 	public void update(Identifier identifier, User user) {
 		Party party = (Party) identifier;
-		if (user.getBlock() == getId()) {
+		if (user.getBlock() == id) {
 			setCandidates(party.getCandidates());
 			setImage(party.getImage());
 			setName(party.getName());
@@ -69,7 +71,7 @@ public class Party extends Validation {
 
 	@Override
 	protected int duplicate(int result, int id) {
-		if (this.id == id)
+		if (getId() == id)
 			result++;
 		List<Candidate> candidates = getCandidates();
 		if (candidates != null)
@@ -84,12 +86,12 @@ public class Party extends Validation {
 		Party matchedParty = (Party) validations.get(2);
 		VotingPaper votingPaper = (VotingPaper) validations.get(3);
 		validations.put(4, this);
-		if (this.id == block) {
-			matchedParty.setId(this.id);
+		if (getId() == block) {
+			matchedParty.setId(getId());
 			if (block == id)
 				return true;
 		}
-		if (this.id == id && match(votingPaper, matchedVotingPaper))
+		if (getId() == id && match(votingPaper, matchedVotingPaper))
 			return true;
 		List<Candidate> candidates = getCandidates();
 		if (candidates != null)
@@ -97,6 +99,18 @@ public class Party extends Validation {
 				if (candidate.hasId(block, id, validations))
 					return true;
 		return false;
+	}
+
+	@Override
+	protected void addNewIds(VotingPapers allVotingPapers, User user) {
+		if (user.hasRole(ADMIN_ROLE)) {
+			if (getId() < 0)
+				setId(generateId(allVotingPapers));
+			List<Candidate> candidates = getCandidates();
+			if (candidates != null)
+				for (Candidate candidate : candidates)
+					candidate.addNewIds(allVotingPapers, user);
+		}
 	}
 
 	private VotingPaper findById(VotingPapers remoteVotingPapers) {

@@ -2,6 +2,7 @@ package it.vige.labs.gc.bean.votingpapers;
 
 import static it.vige.labs.gc.rest.Sex.F;
 import static it.vige.labs.gc.rest.Sex.M;
+import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class Candidate extends Validation {
 
 	@Override
 	public void update(Identifier identifier, User user) {
-		if (user.getBlock() == getId()) {
+		if (user.getBlock() == id) {
 			Candidate candidate = (Candidate) identifier;
 			setImage(candidate.getImage());
 			setName(candidate.getName());
@@ -59,7 +60,7 @@ public class Candidate extends Validation {
 
 	@Override
 	protected int duplicate(int result, int id) {
-		if (this.id == id)
+		if (getId() == id)
 			result++;
 		return result;
 	}
@@ -70,12 +71,19 @@ public class Candidate extends Validation {
 		Party matchedParty = (Party) validations.get(2);
 		VotingPaper votingPaper = (VotingPaper) validations.get(3);
 		Party party = (Party) validations.get(4);
-		if (this.id == block)
+		if (getId() == block)
 			if (block == id)
 				return true;
-		if (this.id == id && match(votingPaper, matchedVotingPaper, party, matchedParty))
+		if (getId() == id && match(votingPaper, matchedVotingPaper, party, matchedParty))
 			return true;
 		return false;
+	}
+
+	@Override
+	protected void addNewIds(VotingPapers allVotingPapers, User user) {
+		if (user.hasRole(ADMIN_ROLE))
+			if (getId() < 0)
+				setId(generateId(allVotingPapers));
 	}
 
 }

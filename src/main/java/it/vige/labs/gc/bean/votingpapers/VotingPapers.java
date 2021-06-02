@@ -1,6 +1,5 @@
 package it.vige.labs.gc.bean.votingpapers;
 
-import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
 
 import java.util.ArrayList;
@@ -61,11 +60,8 @@ public class VotingPapers {
 		return result;
 	}
 
-	public void addNewIds(VotingPapers remoteVotingPapers, VotingPapers votingPapers, User user) {
-		if (state == PREPARE && user.hasRole(ADMIN_ROLE)) {
-			if (remoteVotingPapers != null)
-				remoteVotingPapers.getVotingPapers()
-						.forEach(votingPaper -> votingPaper.addNewIds(remoteVotingPapers, votingPapers));
-		}
+	public void addNewIds(VotingPapers votingPapers, User user) {
+		if (state == PREPARE)
+			getVotingPapers().forEach(votingPaper -> votingPaper.addNewIds(votingPapers, user));
 	}
 }

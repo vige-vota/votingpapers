@@ -4,6 +4,7 @@ import static it.vige.labs.gc.rest.Type.BIGGER;
 import static it.vige.labs.gc.rest.Type.BIGGER_PARTYGROUP;
 import static it.vige.labs.gc.rest.Type.LITTLE;
 import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
+import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class VotingPaper extends Validation {
 	@Override
 	public void update(Identifier identifier, User user) {
 		VotingPaper votingPaper = (VotingPaper) identifier;
-		if (user.getBlock() == getId()) {
+		if (user.getBlock() == id) {
 			setColor(votingPaper.getColor());
 			setDisjointed(votingPaper.isDisjointed());
 			setGroups(votingPaper.getGroups());
@@ -148,7 +149,7 @@ public class VotingPaper extends Validation {
 
 	@Override
 	protected int duplicate(int result, int id) {
-		if (this.id == id)
+		if (getId() == id)
 			result++;
 		List<Party> parties = getParties();
 		if (parties != null)
@@ -165,8 +166,8 @@ public class VotingPaper extends Validation {
 	protected boolean hasId(int block, int id, Map<Integer, Validation> validations) {
 		VotingPaper matchedVotingPaper = (VotingPaper) validations.get(0);
 		validations.put(3, this);
-		if (this.id == block) {
-			matchedVotingPaper.setId(this.id);
+		if (getId() == block) {
+			matchedVotingPaper.setId(getId());
 			if (block == id)
 				return true;
 		}
@@ -179,6 +180,22 @@ public class VotingPaper extends Validation {
 				if (group.hasId(block, id, validations))
 					return true;
 		return false;
+	}
+
+	@Override
+	protected void addNewIds(VotingPapers allVotingPapers, User user) {
+		if (user.hasRole(ADMIN_ROLE)) {
+			if (getId() < 0)
+				setId(generateId(allVotingPapers));
+			List<Party> parties = getParties();
+			if (parties != null)
+				for (Party party : parties)
+					party.addNewIds(allVotingPapers, user);
+			List<Group> groups = getGroups();
+			if (groups != null)
+				for (Group group : groups)
+					group.addNewIds(allVotingPapers, user);
+		}
 	}
 
 	private boolean hasType() {
