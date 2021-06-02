@@ -18,10 +18,6 @@ public abstract class Validation extends Identifier {
 		return result;
 	};
 
-	public boolean hasParent() {
-		return true;
-	}
-
 	public abstract boolean hasBlock(User user);
 
 	public boolean isInBlock(VotingPapers remoteVotingPapers, User user) {
@@ -89,38 +85,15 @@ public abstract class Validation extends Identifier {
 		}
 		return false;
 	}
+	
+	protected abstract int duplicate(int result, int id);
 
 	private boolean duplicate(VotingPapers remoteVotingPapers) {
 		int result = 0;
 		if (id < 0)
 			return false;
-		for (VotingPaper votingPaper : remoteVotingPapers.getVotingPapers()) {
-			if (votingPaper.getId() == id)
-				result++;
-			if (votingPaper.getParties() != null)
-				for (Party party : votingPaper.getParties()) {
-					if (party.getId() == id)
-						result++;
-					if (party.getCandidates() != null)
-						for (Candidate candidate : party.getCandidates())
-							if (candidate.getId() == id)
-								result++;
-				}
-			if (votingPaper.getGroups() != null)
-				for (Group group : votingPaper.getGroups()) {
-					if (group.getId() == id)
-						result++;
-					if (group.getParties() != null)
-						for (Party party : group.getParties()) {
-							if (party.getId() == id)
-								result++;
-							if (party.getCandidates() != null)
-								for (Candidate candidate : party.getCandidates())
-									if (candidate.getId() == id)
-										result++;
-						}
-				}
-		}
+		for (VotingPaper votingPaper : remoteVotingPapers.getVotingPapers())
+			result = votingPaper.duplicate(result, id);
 		return result > 1;
 	}
 }

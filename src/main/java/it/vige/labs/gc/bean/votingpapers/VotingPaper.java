@@ -154,6 +154,21 @@ public class VotingPaper extends Validation {
 		return result;
 	}
 
+	@Override
+	protected int duplicate(int result, int id) {
+		if (this.id == id)
+			result++;
+		List<Party> parties = getParties();
+		if (parties != null)
+			for (Party party : parties)
+				result = party.duplicate(result, id);
+		List<Group> groups = getGroups();
+		if (groups != null)
+			for (Group group : groups)
+				result = group.duplicate(result, id);
+		return result;
+	}
+
 	private boolean hasType() {
 		return type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())
 				|| type.equals(LITTLE.asString()) || type.equals(LITTLE_NOGROUP.asString());

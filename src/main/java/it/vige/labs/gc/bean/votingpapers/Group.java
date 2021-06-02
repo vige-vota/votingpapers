@@ -72,4 +72,15 @@ public class Group extends Validation {
 		return result;
 	}
 
+	@Override
+	protected int duplicate(int result, int id) {
+		if (this.id == id)
+			result++;
+		List<Party> parties = getParties();
+		if (parties != null)
+			for (Party party : parties)
+				result = party.duplicate(result, id);
+		return result;
+	}
+
 }

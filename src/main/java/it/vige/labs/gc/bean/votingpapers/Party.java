@@ -65,6 +65,17 @@ public class Party extends Validation {
 		return result;
 	}
 
+	@Override
+	protected int duplicate(int result, int id) {
+		if (this.id == id)
+			result++;
+		List<Candidate> candidates = getCandidates();
+		if (candidates != null)
+			for (Candidate candidate : candidates)
+				result = candidate.duplicate(result, id);
+		return result;
+	}
+
 	private VotingPaper findById(VotingPapers remoteVotingPapers) {
 		VotingPaper result = null;
 		if (remoteVotingPapers.getVotingPapers() != null) {

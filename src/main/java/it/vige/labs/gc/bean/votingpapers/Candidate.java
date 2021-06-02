@@ -55,4 +55,11 @@ public class Candidate extends Validation {
 		return result;
 	}
 
+	@Override
+	protected int duplicate(int result, int id) {
+		if (this.id == id)
+			result++;
+		return result;
+	}
+
 }
