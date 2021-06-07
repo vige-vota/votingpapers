@@ -5,6 +5,7 @@ import static it.vige.labs.gc.bean.votingpapers.Validation.IMAGE_SIZE;
 import static it.vige.labs.gc.rest.Sex.F;
 import static it.vige.labs.gc.rest.Sex.M;
 import static it.vige.labs.gc.rest.Type.BIGGER;
+import static it.vige.labs.gc.rest.Type.LITTLE;
 import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static it.vige.labs.gc.users.Authorities.CITIZEN_ROLE;
@@ -113,6 +114,11 @@ public class VotingPaperTest {
 		assertFalse(messages.isOk(), "The BIGGER template need the zone");
 
 		votingPaper.setZone(6542276);
+		votingPaper.setType(LITTLE.asString());
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "The LITTLE must not have the zone");
+
+		votingPaper.setType(BIGGER.asString());
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "mandatory fields are ok");
 

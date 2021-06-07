@@ -133,6 +133,8 @@ public class VotingPaper extends Validation {
 			result = false;
 		if (result && zone == -1 && (type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())))
 			result = false;
+		if (result && zone >= 0 && (type.equals(LITTLE_NOGROUP.asString()) || type.equals(LITTLE.asString())))
+			result = false;
 		if (result && groups != null)
 			result = groups.parallelStream().allMatch(group -> group.validate(remoteVotingPapers, user));
 		if (result && parties != null)
