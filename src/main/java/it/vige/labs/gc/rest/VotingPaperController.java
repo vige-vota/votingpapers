@@ -62,13 +62,16 @@ public class VotingPaperController {
 	}
 
 	@GetMapping(value = "/votingPapers")
-	public VotingPapers getVotingPapers() throws Exception {
+	public VotingPapers getVotingPapers(@RequestParam(required = false) String all) throws Exception {
 		VotingPapers votingPapers = getAllVotingPapers();
+		if (all != null)
+			return votingPapers;
 		VotingPapers localVotingPapers = new VotingPapers();
 		localVotingPapers.setVotingPapers(votingPapers.getVotingPapers());
 		localVotingPapers.setState(votingPapers.getState());
 		localVotingPapers.setNextId(votingPapers.getNextId());
-		if (authorities.hasRole(ADMIN_ROLE) || authorities.isAnonymous())
+		if (votingPapers.getState().equals(PREPARE) && authorities.hasRole(ADMIN_ROLE)
+				|| !votingPapers.getState().equals(PREPARE) && authorities.isAnonymous())
 			return localVotingPapers;
 		else {
 			User user = authorities.getUser();
@@ -93,7 +96,7 @@ public class VotingPaperController {
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
 		User user = authorities.getUser();
-		if (getVotingPapers().getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock()))
+		if (getVotingPapers(null).getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock()))
 			return addVotingPapers(postVotingPapers, user);
 		else
 			return errorMessage;
@@ -102,7 +105,7 @@ public class VotingPaperController {
 	@PostMapping(value = "/import")
 	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
 		User user = authorities.getUser();
-		if (getVotingPapers().getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock())) {
+		if (getVotingPapers(null).getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock())) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
 			return addVotingPapers(postVotingPapers, user);
