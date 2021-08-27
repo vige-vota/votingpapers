@@ -29,7 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.vige.labs.gc.bean.votingpapers.Candidate;
 import it.vige.labs.gc.bean.votingpapers.Group;
+import it.vige.labs.gc.bean.votingpapers.Party;
 import it.vige.labs.gc.bean.votingpapers.State;
 import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
@@ -62,8 +64,10 @@ public class VotingPaperController {
 	}
 
 	@GetMapping(value = "/votingPapers")
-	public VotingPapers getVotingPapers(@RequestParam(required = false) String all) throws Exception {
+	public VotingPapers getVotingPapers(@RequestParam(required = false) String all,
+			@RequestParam(required = false) String info) throws Exception {
 		VotingPapers votingPapers = getAllVotingPapers();
+		filterByInfo(votingPapers.getVotingPapers(), info);
 		if (all != null)
 			return votingPapers;
 		VotingPapers localVotingPapers = new VotingPapers();
@@ -96,7 +100,7 @@ public class VotingPaperController {
 	@PostMapping(value = "/votingPapers")
 	public Messages setVotingPapers(@RequestBody VotingPapers postVotingPapers) throws Exception {
 		User user = authorities.getUser();
-		if (getVotingPapers(null).getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock()))
+		if (getVotingPapers(null, null).getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock()))
 			return addVotingPapers(postVotingPapers, user);
 		else
 			return errorMessage;
@@ -105,7 +109,7 @@ public class VotingPaperController {
 	@PostMapping(value = "/import")
 	public Messages setVotingPapers(@RequestParam("file") @RequestPart("file") MultipartFile file) throws Exception {
 		User user = authorities.getUser();
-		if (getVotingPapers(null).getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock())) {
+		if (getVotingPapers(null, null).getState() == PREPARE && (user.hasRole(ADMIN_ROLE) || user.hasBlock())) {
 			ObjectMapper objectMapper = new ObjectMapper();
 			VotingPapers postVotingPapers = objectMapper.readValue(file.getInputStream(), VotingPapers.class);
 			return addVotingPapers(postVotingPapers, user);
@@ -168,5 +172,37 @@ public class VotingPaperController {
 
 	public void setAuthorities(Authorities authorities) {
 		this.authorities = authorities;
+	}
+
+	private void filterByInfo(List<VotingPaper> votingPapers, String info) {
+		if (info != null && votingPapers != null) {
+			for (VotingPaper votingPaper : votingPapers) {
+				List<Group> groups = votingPaper.getGroups();
+				if (groups != null)
+					for (Group group : groups) {
+						group.setImage(null);
+						List<Party> parties = group.getParties();
+						if (parties != null)
+							for (Party party : parties) {
+								party.setImage(null);
+								List<Candidate> candidates = party.getCandidates();
+								if (candidates != null)
+									for (Candidate candidate : candidates) {
+										candidate.setImage(null);
+									}
+							}
+					}
+				List<Party> parties = votingPaper.getParties();
+				if (parties != null)
+					for (Party party : parties) {
+						party.setImage(null);
+						List<Candidate> candidates = party.getCandidates();
+						if (candidates != null)
+							for (Candidate candidate : candidates) {
+								candidate.setImage(null);
+							}
+					}
+			}
+		}
 	}
 }
