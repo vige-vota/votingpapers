@@ -5,6 +5,7 @@ import static it.vige.labs.gc.rest.Type.BIGGER_PARTYGROUP;
 import static it.vige.labs.gc.rest.Type.LITTLE;
 import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
@@ -185,21 +186,37 @@ public class VotingPaper extends Validation {
 	}
 
 	@Override
-	protected void addNewIds(VotingPapers allVotingPapers, User user) {
+	protected void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user) {
 		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
-			setId(generateId(allVotingPapers));
+			setId(generateId(remoteVotingPapers));
 		List<Party> parties = getParties();
 		if (parties != null)
 			for (Party party : parties)
-				party.addNewIds(allVotingPapers, user);
+				party.addNewIds(allVotingPapers, remoteVotingPapers, user);
 		List<Group> groups = getGroups();
 		if (groups != null)
 			for (Group group : groups)
-				group.addNewIds(allVotingPapers, user);
+				group.addNewIds(allVotingPapers, remoteVotingPapers, user);
 	}
 
 	private boolean hasType() {
 		return type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())
 				|| type.equals(LITTLE.asString()) || type.equals(LITTLE_NOGROUP.asString());
+	}
+
+	@Override
+	public Object clone() {
+		try {
+			VotingPaper votingPaper = (VotingPaper) super.clone();
+			List<Group> groups = votingPaper.getGroups();
+			List<Party> parties = votingPaper.getParties();
+			if (groups != null)
+				votingPaper.setGroups(groups.parallelStream().map(g -> (Group) g.clone()).collect(toList()));
+			if (parties != null)
+				votingPaper.setParties(parties.parallelStream().map(p -> (Party) p.clone()).collect(toList()));
+			return votingPaper;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }

@@ -2,7 +2,7 @@ package it.vige.labs.gc.bean.votingpapers;
 
 import it.vige.labs.gc.users.User;
 
-public abstract class Identifier {
+public abstract class Identifier implements Cloneable {
 
 	protected int id;
 
@@ -30,8 +30,7 @@ public abstract class Identifier {
 		return result;
 	}
 
-	protected abstract void addNewIds(VotingPapers allVotingPapers, User user);
+	protected abstract void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user);
 
 	protected abstract void update(Identifier identifier, User user);
-
 }

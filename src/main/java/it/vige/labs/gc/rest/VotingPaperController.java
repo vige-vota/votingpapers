@@ -67,13 +67,10 @@ public class VotingPaperController {
 	public VotingPapers getVotingPapers(@RequestParam(required = false) String all,
 			@RequestParam(required = false) String info) throws Exception {
 		VotingPapers votingPapers = getAllVotingPapers();
-		filterByInfo(votingPapers.getVotingPapers(), info);
+		VotingPapers localVotingPapers = (VotingPapers) votingPapers.clone();
+		filterByInfo(localVotingPapers.getVotingPapers(), info);
 		if (all != null)
-			return votingPapers;
-		VotingPapers localVotingPapers = new VotingPapers();
-		localVotingPapers.setVotingPapers(votingPapers.getVotingPapers());
-		localVotingPapers.setState(votingPapers.getState());
-		localVotingPapers.setNextId(votingPapers.getNextId());
+			return localVotingPapers;
 		if (votingPapers.getState().equals(PREPARE) && authorities.hasRole(ADMIN_ROLE)
 				|| !votingPapers.getState().equals(PREPARE) && authorities.isAnonymous())
 			return localVotingPapers;

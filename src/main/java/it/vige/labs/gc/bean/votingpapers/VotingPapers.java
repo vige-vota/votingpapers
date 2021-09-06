@@ -1,13 +1,14 @@
 package it.vige.labs.gc.bean.votingpapers;
 
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.vige.labs.gc.users.User;
 
-public class VotingPapers {
+public class VotingPapers implements Cloneable {
 
 	private State state;
 
@@ -60,8 +61,21 @@ public class VotingPapers {
 		return result;
 	}
 
-	public void addNewIds(VotingPapers votingPapers, User user) {
+	public void addNewIds(VotingPapers postVotingPapers, User user) {
 		if (state == PREPARE)
-			getVotingPapers().forEach(votingPaper -> votingPaper.addNewIds(votingPapers, user));
+			getVotingPapers().forEach(votingPaper -> votingPaper.addNewIds(this, postVotingPapers, user));
+	}
+
+	@Override
+	public Object clone() {
+		try {
+			VotingPapers votingPapers = (VotingPapers) super.clone();
+			List<VotingPaper> allVotingPapers = votingPapers.getVotingPapers();
+			votingPapers.setVotingPapers(
+					allVotingPapers.parallelStream().map(v -> (VotingPaper) v.clone()).collect(toList()));
+			return votingPapers;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }

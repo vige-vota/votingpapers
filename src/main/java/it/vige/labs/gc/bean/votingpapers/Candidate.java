@@ -80,9 +80,18 @@ public class Candidate extends Validation {
 	}
 
 	@Override
-	protected void addNewIds(VotingPapers allVotingPapers, User user) {
+	protected void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user) {
 		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
-			setId(generateId(allVotingPapers));
+			setId(generateId(remoteVotingPapers));
+	}
+
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 
 }

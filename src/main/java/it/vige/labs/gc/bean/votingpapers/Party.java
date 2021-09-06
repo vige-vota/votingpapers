@@ -1,6 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
@@ -102,13 +103,13 @@ public class Party extends Validation {
 	}
 
 	@Override
-	protected void addNewIds(VotingPapers allVotingPapers, User user) {
+	protected void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user) {
 		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
-			setId(generateId(allVotingPapers));
+			setId(generateId(remoteVotingPapers));
 		List<Candidate> candidates = getCandidates();
 		if (candidates != null)
 			for (Candidate candidate : candidates)
-				candidate.addNewIds(allVotingPapers, user);
+				candidate.addNewIds(allVotingPapers, remoteVotingPapers, user);
 	}
 
 	private VotingPaper findById(VotingPapers remoteVotingPapers) {
@@ -128,5 +129,18 @@ public class Party extends Validation {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public Object clone() {
+		try {
+			Party party = (Party) super.clone();
+			List<Candidate> candidates = party.getCandidates();
+			if (candidates != null)
+				party.setCandidates(candidates.parallelStream().map(c -> (Candidate) c.clone()).collect(toList()));
+			return party;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }
