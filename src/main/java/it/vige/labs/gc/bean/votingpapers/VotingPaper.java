@@ -22,7 +22,7 @@ public class VotingPaper extends Validation {
 
 	private boolean disjointed;
 
-	private int zone = -1;
+	private String zone;
 
 	private List<Group> groups;
 
@@ -60,11 +60,11 @@ public class VotingPaper extends Validation {
 		this.disjointed = disjointed;
 	}
 
-	public int getZone() {
+	public String getZone() {
 		return zone;
 	}
 
-	public void setZone(int zone) {
+	public void setZone(String zone) {
 		this.zone = zone;
 	}
 
@@ -132,9 +132,9 @@ public class VotingPaper extends Validation {
 			result = false;
 		if (result && (type == null || type.isEmpty() || !hasType()))
 			result = false;
-		if (result && zone == -1 && (type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())))
+		if (result && zone == null && (type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())))
 			result = false;
-		if (result && zone >= 0 && (type.equals(LITTLE_NOGROUP.asString()) || type.equals(LITTLE.asString())))
+		if (result && zone != null && (type.equals(LITTLE_NOGROUP.asString()) || type.equals(LITTLE.asString())))
 			result = false;
 		if (result && groups != null)
 			result = groups.parallelStream().allMatch(group -> group.validate(remoteVotingPapers, user));

@@ -119,8 +119,8 @@ public class VotingPaperController {
 		if (state == PREPARE) {
 			return votingPaper.hasBlock(user);
 		} else {
-			int zone = votingPaper.getZone();
-			return zone == -1 || user.getZones().contains(zone);
+			String zone = votingPaper.getZone();
+			return zone == null || user.getZones().contains(zone);
 		}
 	}
 

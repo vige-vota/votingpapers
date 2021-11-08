@@ -20,7 +20,7 @@ public class User implements Serializable {
 
 	private int block;
 
-	private List<Integer> zones;
+	private String zones;
 
 	private Collection<? extends GrantedAuthority> roles;
 
@@ -56,11 +56,11 @@ public class User implements Serializable {
 		this.block = block;
 	}
 
-	public List<Integer> getZones() {
+	public String getZones() {
 		return zones;
 	}
 
-	public void setZones(List<Integer> zones) {
+	public void setZones(String zones) {
 		this.zones = zones;
 	}
 
