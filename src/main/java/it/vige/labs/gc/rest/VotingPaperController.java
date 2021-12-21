@@ -8,12 +8,15 @@ import static it.vige.labs.gc.rest.Validator.errorMessage;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.awt.Color.PINK;
 import static java.lang.String.format;
+import static java.util.Calendar.getInstance;
 import static java.util.stream.Collectors.toList;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +150,9 @@ public class VotingPaperController {
 					votingPapers.setVotingPapers(votingPapersFromJson.getVotingPapers());
 					votingPapers.setState(votingPapersFromJson.getState());
 					votingPapers.setNextId(votingPapersFromJson.getNextId());
+					votingPapersFromJson.getVotingPapers().forEach(e -> {
+						addDates(e);
+					});
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -154,6 +160,7 @@ public class VotingPaperController {
 				List<VotingPaper> pages = new ArrayList<VotingPaper>();
 				VotingPaper page = new VotingPaper();
 				page.setName("VOTA");
+				addDates(page);
 				page.setType(LITTLE.asString());
 				String color = format("%02x%02x%02x", PINK.getRed(), PINK.getGreen(), PINK.getBlue());
 				page.setColor(color);
@@ -201,5 +208,22 @@ public class VotingPaperController {
 					}
 			}
 		}
+	}
+
+	public void addDates(VotingPaper votingPaper) {
+		addDates(votingPaper, 3);
+	}
+
+	public void addDates(VotingPaper votingPaper, int days) {
+		Date startingDate = addDays(new Date(), days);
+		votingPaper.setStartingDate(startingDate);
+		votingPaper.setEndingDate(addDays(startingDate, days));
+	}
+
+	private Date addDays(Date date, int days) {
+		Calendar cal = getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, days); // minus number would decrement the days
+		return cal.getTime();
 	}
 }

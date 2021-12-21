@@ -1,5 +1,6 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static it.vige.labs.gc.rest.Type.BIGGER;
 import static it.vige.labs.gc.rest.Type.BIGGER_PARTYGROUP;
 import static it.vige.labs.gc.rest.Type.LITTLE;
@@ -7,8 +8,11 @@ import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.util.stream.Collectors.toList;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import it.vige.labs.gc.users.User;
 
@@ -19,6 +23,12 @@ public class VotingPaper extends Validation {
 	private String color;
 
 	private String type;
+
+	@JsonFormat(shape = STRING, pattern = "dd-MM-yyyy:hh-mm-ss")
+	private Date startingDate;
+
+	@JsonFormat(shape = STRING, pattern = "dd-MM-yyyy:hh-mm-ss")
+	private Date endingDate;
 
 	private boolean disjointed;
 
@@ -50,6 +60,22 @@ public class VotingPaper extends Validation {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Date getStartingDate() {
+		return startingDate;
+	}
+
+	public void setStartingDate(Date startingDate) {
+		this.startingDate = startingDate;
+	}
+
+	public Date getEndingDate() {
+		return endingDate;
+	}
+
+	public void setEndingDate(Date endingDate) {
+		this.endingDate = endingDate;
 	}
 
 	public boolean isDisjointed() {
@@ -125,6 +151,12 @@ public class VotingPaper extends Validation {
 						|| (parties != null && parties.parallelStream().anyMatch(group -> group.hasBlock(user))));
 	}
 
+	private boolean dateOk() {
+		Date date = new Date();
+		return startingDate != null && endingDate != null && startingDate.compareTo(date) > 0
+				&& endingDate.compareTo(startingDate) > 0;
+	}
+
 	@Override
 	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = super.validate(remoteVotingPapers, user);
@@ -135,6 +167,8 @@ public class VotingPaper extends Validation {
 		if (result && zone == null && (type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())))
 			result = false;
 		if (result && zone != null && (type.equals(LITTLE_NOGROUP.asString()) || type.equals(LITTLE.asString())))
+			result = false;
+		if (result && !dateOk())
 			result = false;
 		if (result && groups != null)
 			result = groups.parallelStream().allMatch(group -> group.validate(remoteVotingPapers, user));

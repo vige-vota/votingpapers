@@ -90,9 +90,13 @@ public class VotingPaperTest {
 		VotingPaper votingPaper = new VotingPaper();
 		votingPapers.setVotingPapers(new ArrayList<VotingPaper>(asList(new VotingPaper[] { votingPaper })));
 		messages = votingPaperController.setVotingPapers(votingPapers);
-		assertFalse(messages.isOk(), "votingpaper without name, color and type");
+		assertFalse(messages.isOk(), "votingpaper without name, dates, color and type");
 
 		votingPaper.setName("My first voting paper");
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "votingpaper without dates, color and type");
+
+		votingPaperController.addDates(votingPaper);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "votingpaper without color and type");
 
@@ -285,6 +289,14 @@ public class VotingPaperTest {
 		group.setParties(new ArrayList<Party>());
 		group.getParties().add(party);
 
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "schede code has no dates");
+
+		votingPaperController.addDates(votingPaper, -50);
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "schede code has dates old then the current date");
+		
+		votingPaperController.addDates(votingPaper);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "schede code not in the user properties, so no group is updated");
 
