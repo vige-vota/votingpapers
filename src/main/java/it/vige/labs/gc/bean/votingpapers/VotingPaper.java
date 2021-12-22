@@ -24,10 +24,10 @@ public class VotingPaper extends Validation {
 
 	private String type;
 
-	@JsonFormat(shape = STRING, pattern = "dd-MM-yyyy:hh-mm-ss")
+	@JsonFormat(shape = STRING, pattern = "yyyy-MM-dd'T'hh:mm:ss")
 	private Date startingDate;
 
-	@JsonFormat(shape = STRING, pattern = "dd-MM-yyyy:hh-mm-ss")
+	@JsonFormat(shape = STRING, pattern = "yyyy-MM-dd'T'hh:mm:ss")
 	private Date endingDate;
 
 	private boolean disjointed;

@@ -151,7 +151,7 @@ public class VotingPaperController {
 					votingPapers.setState(votingPapersFromJson.getState());
 					votingPapers.setNextId(votingPapersFromJson.getNextId());
 					votingPapersFromJson.getVotingPapers().forEach(e -> {
-						addDates(e);
+						addDates(e, 1);
 					});
 				} catch (IOException e) {
 					e.printStackTrace();
