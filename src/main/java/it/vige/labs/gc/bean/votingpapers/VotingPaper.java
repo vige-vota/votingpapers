@@ -153,8 +153,8 @@ public class VotingPaper extends Validation {
 
 	private boolean dateOk() {
 		Date date = new Date();
-		return startingDate != null && endingDate != null && startingDate.compareTo(date) > 0
-				&& endingDate.compareTo(startingDate) > 0;
+		return startingDate != null && endingDate != null && startingDate.compareTo(endingDate) < 0
+				&& endingDate.compareTo(date) > 0;
 	}
 
 	@Override

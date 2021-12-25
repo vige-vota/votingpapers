@@ -8,6 +8,7 @@ import static it.vige.labs.gc.rest.Validator.errorMessage;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.awt.Color.PINK;
 import static java.lang.String.format;
+import static java.util.Calendar.DATE;
 import static java.util.Calendar.getInstance;
 import static java.util.stream.Collectors.toList;
 
@@ -151,7 +152,7 @@ public class VotingPaperController {
 					votingPapers.setState(votingPapersFromJson.getState());
 					votingPapers.setNextId(votingPapersFromJson.getNextId());
 					votingPapersFromJson.getVotingPapers().forEach(e -> {
-						addDates(e, 1);
+						addDates(e, -1, 3);
 					});
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -211,19 +212,19 @@ public class VotingPaperController {
 	}
 
 	public void addDates(VotingPaper votingPaper) {
-		addDates(votingPaper, 3);
+		addDates(votingPaper, 3, 3);
 	}
 
-	public void addDates(VotingPaper votingPaper, int days) {
-		Date startingDate = addDays(new Date(), days);
+	public void addDates(VotingPaper votingPaper, int startingDays, int endingDays) {
+		Date startingDate = addDays(new Date(), startingDays);
 		votingPaper.setStartingDate(startingDate);
-		votingPaper.setEndingDate(addDays(startingDate, days));
+		votingPaper.setEndingDate(addDays(startingDate, endingDays));
 	}
 
 	private Date addDays(Date date, int days) {
 		Calendar cal = getInstance();
 		cal.setTime(date);
-		cal.add(Calendar.DATE, days); // minus number would decrement the days
+		cal.add(DATE, days); // minus number would decrement the days
 		return cal.getTime();
 	}
 }

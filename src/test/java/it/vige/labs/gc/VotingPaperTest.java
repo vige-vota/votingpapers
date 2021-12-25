@@ -292,9 +292,13 @@ public class VotingPaperTest {
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "schede code has no dates");
 
-		votingPaperController.addDates(votingPaper, -50);
+		votingPaperController.addDates(votingPaper, 1, -3);
 		messages = votingPaperController.setVotingPapers(votingPapers);
-		assertFalse(messages.isOk(), "schede code has dates old then the current date");
+		assertFalse(messages.isOk(), "ending date before starting date");
+
+		votingPaperController.addDates(votingPaper, -8, -2);
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "ending date before current date");
 		
 		votingPaperController.addDates(votingPaper);
 		messages = votingPaperController.setVotingPapers(votingPapers);
