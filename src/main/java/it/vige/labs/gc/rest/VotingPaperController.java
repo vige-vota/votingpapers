@@ -124,7 +124,9 @@ public class VotingPaperController {
 			return votingPaper.hasBlock(user);
 		} else {
 			String zone = votingPaper.getZone();
-			return zone == null || user.getZones().contains(zone);
+			Date date = new Date();
+			return (zone == null || user.getZones().contains(zone)) && date.compareTo(votingPaper.getStartingDate()) > 0
+					&& date.compareTo(votingPaper.getEndingDate()) < 0;
 		}
 	}
 
