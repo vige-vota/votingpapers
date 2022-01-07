@@ -45,6 +45,7 @@ import it.vige.labs.gc.bean.votingpapers.Group;
 import it.vige.labs.gc.bean.votingpapers.Party;
 import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
+import it.vige.labs.gc.bean.votingpapers.VotingDate;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.rest.Sex;
 import it.vige.labs.gc.rest.VotingPaperController;
@@ -96,6 +97,10 @@ public class VotingPaperTest {
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "votingpaper without dates, color and type");
 
+		votingPaper.setDates(new ArrayList<VotingDate>());
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "votingpaper without color and type and empty dates");
+		
 		votingPaperController.addDates(votingPaper);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "votingpaper without color and type");
@@ -292,15 +297,19 @@ public class VotingPaperTest {
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "schede code has no dates");
 
+		votingPaper.setDates(new ArrayList<VotingDate>());
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "schede code has empty dates");
+
 		votingPaperController.addDates(votingPaper, 1, -3);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "ending date before starting date");
 
-		votingPaperController.addDates(votingPaper, -8, -2);
+		votingPaperController.updateDates(votingPaper, -8, -2);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "ending date before current date");
-		
-		votingPaperController.addDates(votingPaper);
+
+		votingPaperController.updateDates(votingPaper);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertTrue(messages.isOk(), "schede code not in the user properties, so no group is updated");
 

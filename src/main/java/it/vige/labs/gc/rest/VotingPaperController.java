@@ -37,6 +37,7 @@ import it.vige.labs.gc.bean.votingpapers.Candidate;
 import it.vige.labs.gc.bean.votingpapers.Group;
 import it.vige.labs.gc.bean.votingpapers.Party;
 import it.vige.labs.gc.bean.votingpapers.State;
+import it.vige.labs.gc.bean.votingpapers.VotingDate;
 import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
 import it.vige.labs.gc.messages.Messages;
@@ -124,9 +125,8 @@ public class VotingPaperController {
 			return votingPaper.hasBlock(user);
 		} else {
 			String zone = votingPaper.getZone();
-			Date date = new Date();
-			return (zone == null || user.getZones().contains(zone)) && date.compareTo(votingPaper.getStartingDate()) > 0
-					&& date.compareTo(votingPaper.getEndingDate()) < 0;
+			return (zone == null || user.getZones().contains(zone)) && votingPaper.getDates() != null
+					&& votingPaper.getDates().parallelStream().anyMatch(votingDate -> votingDate.dateOk());
 		}
 	}
 
@@ -154,7 +154,7 @@ public class VotingPaperController {
 					votingPapers.setState(votingPapersFromJson.getState());
 					votingPapers.setNextId(votingPapersFromJson.getNextId());
 					votingPapersFromJson.getVotingPapers().forEach(e -> {
-						addDates(e, -1, 3);
+						updateDates(e, -1, 3);
 					});
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -217,10 +217,31 @@ public class VotingPaperController {
 		addDates(votingPaper, 3, 3);
 	}
 
+	public void updateDates(VotingPaper votingPaper) {
+		updateDates(votingPaper, 3, 3);
+	}
+
+	public void updateDates(VotingPaper votingPaper, int startingDays, int endingDays) {
+		Date startingDate = addDays(new Date(), startingDays);
+		if (votingPaper.getDates() == null)
+			votingPaper.setDates(new ArrayList<VotingDate>());
+		votingPaper.getDates().forEach(e -> {
+			Date date = startingDate;
+			e.setStartingDate(date);
+			e.setEndingDate(addDays(date, endingDays));
+			date = addDays(date, 1);
+		});
+	}
+
 	public void addDates(VotingPaper votingPaper, int startingDays, int endingDays) {
 		Date startingDate = addDays(new Date(), startingDays);
-		votingPaper.setStartingDate(startingDate);
-		votingPaper.setEndingDate(addDays(startingDate, endingDays));
+		Date endingDate = addDays(startingDate, endingDays);
+		if (votingPaper.getDates() == null)
+			votingPaper.setDates(new ArrayList<VotingDate>());
+		VotingDate votingDate = new VotingDate();
+		votingDate.setStartingDate(startingDate);
+		votingDate.setEndingDate(endingDate);
+		votingPaper.getDates().add(votingDate);
 	}
 
 	private Date addDays(Date date, int days) {
