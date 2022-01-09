@@ -223,14 +223,12 @@ public class VotingPaperController {
 
 	public void updateDates(VotingPaper votingPaper, int startingDays, int endingDays) {
 		Date startingDate = addDays(new Date(), startingDays);
-		if (votingPaper.getDates() == null)
-			votingPaper.setDates(new ArrayList<VotingDate>());
-		votingPaper.getDates().forEach(e -> {
-			Date date = startingDate;
-			e.setStartingDate(date);
-			e.setEndingDate(addDays(date, endingDays));
-			date = addDays(date, 1);
-		});
+		if (votingPaper.getDates() != null)
+			for (VotingDate votingDate : votingPaper.getDates()) {
+				votingDate.setStartingDate(startingDate);
+				votingDate.setEndingDate(addDays(startingDate, endingDays));
+				startingDate = addDays(startingDate, endingDays + 1);
+			}
 	}
 
 	public void addDates(VotingPaper votingPaper, int startingDays, int endingDays) {
