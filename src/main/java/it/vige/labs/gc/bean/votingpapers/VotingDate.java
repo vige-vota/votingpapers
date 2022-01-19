@@ -30,10 +30,13 @@ public class VotingDate {
 		this.endingDate = endingDate;
 	}
 
-	public boolean dateOk() {
+	public boolean dateMatchTime() {
 		Date date = new Date();
-		return startingDate != null && endingDate != null && startingDate.compareTo(endingDate) < 0
-				&& endingDate.compareTo(date) > 0;
+		return startingDate != null && endingDate != null && endingDate.compareTo(date) > 0;
+	}
+
+	public boolean startingMinor() {
+		return startingDate != null && endingDate != null && startingDate.compareTo(endingDate) < 0;
 	}
 
 }

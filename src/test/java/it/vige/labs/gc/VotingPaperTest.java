@@ -100,8 +100,14 @@ public class VotingPaperTest {
 		votingPaper.setDates(new ArrayList<VotingDate>());
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "votingpaper without color and type and empty dates");
-		
+
 		votingPaperController.addDates(votingPaper);
+		votingPaper.getDates().get(0)
+				.setEndingDate(votingPaperController.addDays(votingPaper.getDates().get(0).getEndingDate(), -8));
+		messages = votingPaperController.setVotingPapers(votingPapers);
+		assertFalse(messages.isOk(), "votingpaper without color and type and ending date minor than starting date");
+
+		votingPaperController.updateDates(votingPaper);
 		messages = votingPaperController.setVotingPapers(votingPapers);
 		assertFalse(messages.isOk(), "votingpaper without color and type");
 

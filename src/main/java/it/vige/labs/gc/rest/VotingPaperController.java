@@ -126,7 +126,7 @@ public class VotingPaperController {
 		} else {
 			String zone = votingPaper.getZone();
 			return (zone == null || user.getZones().contains(zone)) && votingPaper.getDates() != null
-					&& votingPaper.getDates().parallelStream().anyMatch(votingDate -> votingDate.dateOk());
+					&& votingPaper.getDates().parallelStream().anyMatch(votingDate -> votingDate.dateMatchTime());
 		}
 	}
 
@@ -242,7 +242,7 @@ public class VotingPaperController {
 		votingPaper.getDates().add(votingDate);
 	}
 
-	private Date addDays(Date date, int days) {
+	public Date addDays(Date date, int days) {
 		Calendar cal = getInstance();
 		cal.setTime(date);
 		cal.add(DATE, days); // minus number would decrement the days

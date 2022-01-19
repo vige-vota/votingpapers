@@ -146,7 +146,8 @@ public class VotingPaper extends Validation {
 			result = false;
 		if (result && zone != null && (type.equals(LITTLE_NOGROUP.asString()) || type.equals(LITTLE.asString())))
 			result = false;
-		if (result && (dates == null || !dates.parallelStream().anyMatch(votingDate -> votingDate.dateOk())))
+		if (result && (dates == null || !dates.parallelStream().anyMatch(votingDate -> votingDate.dateMatchTime())
+				|| !dates.parallelStream().allMatch(votingDate -> votingDate.startingMinor())))
 			result = false;
 		if (result && groups != null)
 			result = groups.parallelStream().allMatch(group -> group.validate(remoteVotingPapers, user));
