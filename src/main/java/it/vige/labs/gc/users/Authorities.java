@@ -56,7 +56,7 @@ public class Authorities implements Serializable, Converters {
 		String id = authentication.getName();
 		UserRepresentation user = null;
 		try {
-			UriComponents uriComponents = newInstance().uri(getFindUserByIdURI(id)).buildAndExpand();
+			UriComponents uriComponents = newInstance().uri(getFindUserURI()).buildAndExpand();
 
 			ResponseEntity<UserRepresentation> response = restTemplate.exchange(uriComponents.toString(), GET, null,
 					UserRepresentation.class);
@@ -75,8 +75,8 @@ public class Authorities implements Serializable, Converters {
 		return usersURI;
 	}
 
-	public URI getFindUserByIdURI(String id) {
-		return usersURI.resolve(usersURI.getPath() + "/admin/realms/" + usersRealm + "/users" + "/" + id);
+	public URI getFindUserURI() {
+		return usersURI.resolve(usersURI.getPath() + "/realms/" + usersRealm + "/account");
 	}
 
 	public String getUsersRealm() {

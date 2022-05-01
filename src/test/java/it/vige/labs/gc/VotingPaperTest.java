@@ -477,7 +477,7 @@ public class VotingPaperTest {
 		attributes.put("block", asList(new String[] { block + "" }));
 		attributes.put("zones", asList(zones));
 		user.setAttributes(attributes);
-		when(restTemplate.exchange(authorities.getFindUserByIdURI(DEFAULT_USER).toString(), GET, null,
+		when(restTemplate.exchange(authorities.getFindUserURI().toString(), GET, null,
 				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));
 		authorities.setRestTemplate(restTemplate);
 		votingPaperController.setAuthorities(authorities);
