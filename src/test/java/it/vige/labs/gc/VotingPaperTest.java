@@ -37,15 +37,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import com.c4_soft.springaddons.security.oauth2.test.annotations.OidcStandardClaims;
+import com.c4_soft.springaddons.security.oauth2.test.annotations.OpenIdClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 
 import it.vige.labs.gc.bean.votingpapers.Candidate;
 import it.vige.labs.gc.bean.votingpapers.Group;
 import it.vige.labs.gc.bean.votingpapers.Party;
+import it.vige.labs.gc.bean.votingpapers.VotingDate;
 import it.vige.labs.gc.bean.votingpapers.VotingPaper;
 import it.vige.labs.gc.bean.votingpapers.VotingPapers;
-import it.vige.labs.gc.bean.votingpapers.VotingDate;
 import it.vige.labs.gc.messages.Messages;
 import it.vige.labs.gc.rest.Sex;
 import it.vige.labs.gc.rest.VotingPaperController;
@@ -71,7 +71,7 @@ public class VotingPaperTest {
 	private Authorities authorities;
 
 	@Test
-	@WithMockKeycloakAuth(authorities = { ADMIN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
+	@WithMockKeycloakAuth(authorities = { ADMIN_ROLE }, claims = @OpenIdClaims(preferredUsername = DEFAULT_USER))
 	public void votingPaperAdmin() throws Exception {
 		VotingPapers votingPapers = votingPaperController.getVotingPapers(null, null);
 		List<VotingPaper> list = votingPapers.getVotingPapers();
@@ -256,7 +256,7 @@ public class VotingPaperTest {
 	}
 
 	@Test
-	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, oidc = @OidcStandardClaims(preferredUsername = DEFAULT_USER))
+	@WithMockKeycloakAuth(authorities = { CITIZEN_ROLE }, claims = @OpenIdClaims(preferredUsername = DEFAULT_USER))
 	public void votingPaperCitizen() throws Exception {
 
 		mockUsers(86, "5-2523228-2523962-6542276");
@@ -477,8 +477,8 @@ public class VotingPaperTest {
 		attributes.put("block", asList(new String[] { block + "" }));
 		attributes.put("zones", asList(zones));
 		user.setAttributes(attributes);
-		when(restTemplate.exchange(authorities.getFindUserURI().toString(), GET, null,
-				UserRepresentation.class)).thenReturn(new ResponseEntity<UserRepresentation>(user, OK));
+		when(restTemplate.exchange(authorities.getFindUserURI().toString(), GET, null, UserRepresentation.class))
+				.thenReturn(new ResponseEntity<UserRepresentation>(user, OK));
 		authorities.setRestTemplate(restTemplate);
 		votingPaperController.setAuthorities(authorities);
 	}
