@@ -1,7 +1,7 @@
 package it.vige.labs.gc.rest;
 
 public enum Type {
-	BIGGER("bigger"), LITTLE("little"), LITTLE_NOGROUP("little-nogroup"), BIGGER_PARTYGROUP("bigger-partygroup");
+	BIGGER("bigger"), LITTLE("little"), LITTLE_NOGROUP("little-nogroup"), BIGGER_PARTYGROUP("bigger-partygroup"), REFERENDUM("referendum");
 
 	public String asString() {
 		return asString;

@@ -4,6 +4,7 @@ import static it.vige.labs.gc.rest.Type.BIGGER;
 import static it.vige.labs.gc.rest.Type.BIGGER_PARTYGROUP;
 import static it.vige.labs.gc.rest.Type.LITTLE;
 import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
+import static it.vige.labs.gc.rest.Type.REFERENDUM;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.util.stream.Collectors.toList;
 
@@ -214,7 +215,8 @@ public class VotingPaper extends Validation {
 
 	private boolean hasType() {
 		return type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())
-				|| type.equals(LITTLE.asString()) || type.equals(LITTLE_NOGROUP.asString());
+				|| type.equals(LITTLE.asString()) || type.equals(LITTLE_NOGROUP.asString())
+				|| type.equals(REFERENDUM.asString());
 	}
 
 	@Override
