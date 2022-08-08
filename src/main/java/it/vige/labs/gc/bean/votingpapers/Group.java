@@ -73,7 +73,7 @@ public class Group extends Validation {
 		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && parties != null) {
 			result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers, user));
-			if (result && parties.size() != 2) {
+			if (result && parties.size() > 2) {
 				VotingPaper remoteVotingPaper = findVotingPaper(this);
 				if (remoteVotingPaper.getType().equals(REFERENDUM.asString()))
 					result = false;
