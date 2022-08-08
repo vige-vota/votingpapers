@@ -1,5 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import it.vige.labs.gc.users.User;
 
 public abstract class Identifier implements Cloneable {
@@ -7,6 +9,9 @@ public abstract class Identifier implements Cloneable {
 	protected int id;
 
 	protected String name;
+	
+	@JsonIgnore
+	protected Identifier parent;
 
 	public int getId() {
 		return id;
@@ -24,13 +29,17 @@ public abstract class Identifier implements Cloneable {
 		this.name = name;
 	}
 
-	protected int generateId(VotingPapers votingPapers) {
-		int result = votingPapers.getNextId() + 1;
-		votingPapers.setNextId(result);
-		return result;
+	public Identifier getParent() {
+		return parent;
+	}
+
+	public void setParent(Identifier parent) {
+		this.parent = parent;
 	}
 
 	protected abstract void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user);
+
+	protected abstract void addParents();
 
 	protected abstract void update(Identifier identifier, User user);
 }

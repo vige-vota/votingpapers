@@ -49,6 +49,10 @@ public class VotingPapers implements Cloneable {
 		this.nextId = nextId;
 	}
 
+	public synchronized int incrementNextId() {
+		return ++nextId;
+	}
+
 	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = false;
 		if (state == PREPARE) {
@@ -64,6 +68,11 @@ public class VotingPapers implements Cloneable {
 	public void addNewIds(VotingPapers postVotingPapers, User user) {
 		if (state == PREPARE)
 			getVotingPapers().forEach(votingPaper -> votingPaper.addNewIds(this, postVotingPapers, user));
+	}
+
+	public void addParents() {
+		if (state == PREPARE)
+			getVotingPapers().forEach(votingPaper -> votingPaper.addParents());
 	}
 
 	@Override

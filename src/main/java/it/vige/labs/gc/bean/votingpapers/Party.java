@@ -61,7 +61,7 @@ public class Party extends Validation {
 		boolean result = super.validate(remoteVotingPapers, user);
 		if (result && candidates != null) {
 			result = candidates.parallelStream().allMatch(candidate -> candidate.validate(remoteVotingPapers, user));
-			VotingPaper remoteVotingPaper = findById(remoteVotingPapers);
+			VotingPaper remoteVotingPaper = findVotingPaper(this);
 			if (remoteVotingPaper.getMaxCandidates() > candidates.size())
 				result = false;
 		}
@@ -105,30 +105,21 @@ public class Party extends Validation {
 	@Override
 	protected void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user) {
 		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
-			setId(generateId(remoteVotingPapers));
+			setId(remoteVotingPapers.incrementNextId());
 		List<Candidate> candidates = getCandidates();
 		if (candidates != null)
-			for (Candidate candidate : candidates)
+			candidates.parallelStream().forEach(candidate -> {
 				candidate.addNewIds(allVotingPapers, remoteVotingPapers, user);
+			});
 	}
 
-	private VotingPaper findById(VotingPapers remoteVotingPapers) {
-		VotingPaper result = null;
-		if (remoteVotingPapers.getVotingPapers() != null) {
-			for (VotingPaper votingPaper : remoteVotingPapers.getVotingPapers()) {
-				if (votingPaper.getParties() != null)
-					for (Party party : votingPaper.getParties())
-						if (party.getId() == id)
-							result = votingPaper;
-				if (votingPaper.getGroups() != null)
-					for (Group group : votingPaper.getGroups())
-						if (group.getParties() != null)
-							for (Party party : group.getParties())
-								if (party.getId() == id)
-									result = votingPaper;
-			}
-		}
-		return result;
+	@Override
+	protected void addParents() {
+		List<Candidate> candidates = getCandidates();
+		if (candidates != null)
+			candidates.parallelStream().forEach(candidate -> {
+				candidate.setParent(this);
+			});
 	}
 
 	@Override

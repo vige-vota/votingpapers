@@ -1,4 +1,4 @@
-package it.vige.labs.gc.rest;
+package it.vige.labs.gc.bean.votingpapers;
 
 public enum Type {
 	BIGGER("bigger"), LITTLE("little"), LITTLE_NOGROUP("little-nogroup"), BIGGER_PARTYGROUP("bigger-partygroup"), REFERENDUM("referendum");

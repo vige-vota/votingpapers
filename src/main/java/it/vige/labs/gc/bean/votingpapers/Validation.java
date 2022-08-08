@@ -1,5 +1,6 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import static it.vige.labs.gc.bean.votingpapers.Type.REFERENDUM;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 
 import java.util.HashMap;
@@ -11,11 +12,17 @@ public abstract class Validation extends Identifier {
 
 	public static final int IMAGE_SIZE = 60000;
 
+	public static final int NAME_SIZE = 40;
+
 	protected boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = false;
 		if (user.hasRole(ADMIN_ROLE) || isInBlock(remoteVotingPapers, user)) {
-			if (name != null && !name.isEmpty() && !duplicate(remoteVotingPapers))
+			if (name != null && !name.isEmpty() && !duplicate(remoteVotingPapers)) {
 				result = true;
+				VotingPaper votingPaper = findVotingPaper(this);
+				if (votingPaper.getType() != null && !votingPaper.getType().equals(REFERENDUM.asString()) && name.length() > NAME_SIZE)
+					result = false;
+			}
 		} else
 			result = true;
 		return result;
@@ -63,5 +70,16 @@ public abstract class Validation extends Identifier {
 		for (VotingPaper votingPaper : remoteVotingPapers.getVotingPapers())
 			result = votingPaper.duplicate(result, id);
 		return result > 1;
+	}
+
+	protected VotingPaper findVotingPaper(Identifier identifier) {
+		Identifier parent = identifier.getParent();
+		while (parent != null) {
+			if (parent instanceof VotingPaper)
+				return (VotingPaper) parent;
+			else
+				return findVotingPaper(parent);
+		}
+		return (VotingPaper) identifier;
 	}
 }

@@ -1,4 +1,4 @@
-package it.vige.labs.gc.rest;
+package it.vige.labs.gc.bean.votingpapers;
 
 public enum Sex {
 	M('M'), F('F');
