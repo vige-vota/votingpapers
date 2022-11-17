@@ -182,6 +182,18 @@ public class ImagesTest {
 		String popolariPerLItaliaStr = new String(getEncoder().encodeToString(popolariPerLItalia.readAllBytes()));
 		logger.info("popolariperlitalia.jpg - " + popolariPerLItaliaStr);
 		assertTrue(popolariPerLItaliaStr.length() <= IMAGE_SIZE);
+
+		BufferedInputStream si = (BufferedInputStream) this.getClass()
+				.getResourceAsStream("/parties/si.png");
+		String siStr = new String(getEncoder().encodeToString(si.readAllBytes()));
+		logger.info("si.png - " + siStr);
+		assertTrue(siStr.length() <= IMAGE_SIZE);
+
+		BufferedInputStream no = (BufferedInputStream) this.getClass()
+				.getResourceAsStream("/parties/no.png");
+		String noStr = new String(getEncoder().encodeToString(no.readAllBytes()));
+		logger.info("no.png - " + noStr);
+		assertTrue(noStr.length() <= IMAGE_SIZE);
 	}
 
 	@Test

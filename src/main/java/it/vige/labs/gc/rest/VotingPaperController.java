@@ -2,7 +2,7 @@ package it.vige.labs.gc.rest;
 
 import static it.vige.labs.gc.JavaAppApplication.TOPIC_NAME;
 import static it.vige.labs.gc.bean.votingpapers.State.PREPARE;
-import static it.vige.labs.gc.rest.Type.LITTLE;
+import static it.vige.labs.gc.bean.votingpapers.Type.LITTLE;
 import static it.vige.labs.gc.rest.Validator.defaultMessage;
 import static it.vige.labs.gc.rest.Validator.errorMessage;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
@@ -131,6 +131,7 @@ public class VotingPaperController {
 	}
 
 	private Messages addVotingPapers(VotingPapers postVotingPapers, User user) throws Exception {
+		postVotingPapers.addParents();
 		Messages messages = validator.validate(postVotingPapers, user);
 		if (messages.isOk()) {
 			postVotingPapers.addNewIds(votingPapers, user);
@@ -153,6 +154,7 @@ public class VotingPaperController {
 					votingPapers.setVotingPapers(votingPapersFromJson.getVotingPapers());
 					votingPapers.setState(votingPapersFromJson.getState());
 					votingPapers.setNextId(votingPapersFromJson.getNextId());
+					votingPapers.addParents();
 					votingPapersFromJson.getVotingPapers().forEach(e -> {
 						updateDates(e, -1, 3);
 					});

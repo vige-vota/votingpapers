@@ -1,7 +1,7 @@
 package it.vige.labs.gc.bean.votingpapers;
 
-import static it.vige.labs.gc.rest.Sex.F;
-import static it.vige.labs.gc.rest.Sex.M;
+import static it.vige.labs.gc.bean.votingpapers.Sex.F;
+import static it.vige.labs.gc.bean.votingpapers.Sex.M;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 
 import java.util.Map;
@@ -82,7 +82,7 @@ public class Candidate extends Validation {
 	@Override
 	protected void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user) {
 		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
-			setId(generateId(remoteVotingPapers));
+			setId(remoteVotingPapers.incrementNextId());
 	}
 
 	@Override
@@ -92,6 +92,10 @@ public class Candidate extends Validation {
 		} catch (CloneNotSupportedException e) {
 			return null;
 		}
+	}
+
+	@Override
+	protected void addParents() {
 	}
 
 }

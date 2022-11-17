@@ -1,9 +1,10 @@
 package it.vige.labs.gc.bean.votingpapers;
 
-import static it.vige.labs.gc.rest.Type.BIGGER;
-import static it.vige.labs.gc.rest.Type.BIGGER_PARTYGROUP;
-import static it.vige.labs.gc.rest.Type.LITTLE;
-import static it.vige.labs.gc.rest.Type.LITTLE_NOGROUP;
+import static it.vige.labs.gc.bean.votingpapers.Type.BIGGER;
+import static it.vige.labs.gc.bean.votingpapers.Type.BIGGER_PARTYGROUP;
+import static it.vige.labs.gc.bean.votingpapers.Type.LITTLE;
+import static it.vige.labs.gc.bean.votingpapers.Type.LITTLE_NOGROUP;
+import static it.vige.labs.gc.bean.votingpapers.Type.REFERENDUM;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.util.stream.Collectors.toList;
 
@@ -144,7 +145,8 @@ public class VotingPaper extends Validation {
 			result = false;
 		if (result && zone == null && (type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())))
 			result = false;
-		if (result && zone != null && (type.equals(LITTLE_NOGROUP.asString()) || type.equals(LITTLE.asString())))
+		if (result && zone != null && (type.equals(LITTLE_NOGROUP.asString()) || type.equals(LITTLE.asString())
+				|| type.equals(REFERENDUM.asString())))
 			result = false;
 		if (result && (dates == null || !dates.parallelStream().anyMatch(votingDate -> votingDate.dateMatchTime())
 				|| !dates.parallelStream().allMatch(votingDate -> votingDate.startingMinor())))
@@ -201,20 +203,39 @@ public class VotingPaper extends Validation {
 	@Override
 	protected void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user) {
 		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
-			setId(generateId(remoteVotingPapers));
+			setId(remoteVotingPapers.incrementNextId());
 		List<Party> parties = getParties();
 		if (parties != null)
-			for (Party party : parties)
+			parties.parallelStream().forEach(party -> {
 				party.addNewIds(allVotingPapers, remoteVotingPapers, user);
+			});
 		List<Group> groups = getGroups();
 		if (groups != null)
-			for (Group group : groups)
+			groups.parallelStream().forEach(group -> {
 				group.addNewIds(allVotingPapers, remoteVotingPapers, user);
+			});
+	}
+
+	@Override
+	protected void addParents() {
+		List<Party> parties = getParties();
+		if (parties != null)
+			parties.parallelStream().forEach(party -> {
+				party.setParent(this);
+				party.addParents();
+			});
+		List<Group> groups = getGroups();
+		if (groups != null)
+			groups.parallelStream().forEach(group -> {
+				group.setParent(this);
+				group.addParents();
+			});
 	}
 
 	private boolean hasType() {
 		return type.equals(BIGGER.asString()) || type.equals(BIGGER_PARTYGROUP.asString())
-				|| type.equals(LITTLE.asString()) || type.equals(LITTLE_NOGROUP.asString());
+				|| type.equals(LITTLE.asString()) || type.equals(LITTLE_NOGROUP.asString())
+				|| type.equals(REFERENDUM.asString());
 	}
 
 	@Override

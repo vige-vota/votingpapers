@@ -1,5 +1,6 @@
 package it.vige.labs.gc.bean.votingpapers;
 
+import static it.vige.labs.gc.bean.votingpapers.Type.REFERENDUM;
 import static it.vige.labs.gc.users.Authorities.ADMIN_ROLE;
 import static java.util.stream.Collectors.toList;
 
@@ -70,8 +71,14 @@ public class Group extends Validation {
 	@Override
 	public boolean validate(VotingPapers remoteVotingPapers, User user) {
 		boolean result = super.validate(remoteVotingPapers, user);
-		if (result && parties != null)
+		if (result && parties != null) {
 			result = parties.parallelStream().allMatch(party -> party.validate(remoteVotingPapers, user));
+			if (result && parties.size() > 2) {
+				VotingPaper remoteVotingPaper = findVotingPaper(this);
+				if (remoteVotingPaper.getType().equals(REFERENDUM.asString()))
+					result = false;
+			}
+		}
 		if (result && image != null)
 			result = image.length() <= IMAGE_SIZE;
 		return result;
@@ -110,11 +117,22 @@ public class Group extends Validation {
 	@Override
 	protected void addNewIds(VotingPapers allVotingPapers, VotingPapers remoteVotingPapers, User user) {
 		if (getId() < 0 && (user.hasRole(ADMIN_ROLE) || isInBlock(allVotingPapers, user)))
-			setId(generateId(remoteVotingPapers));
+			setId(remoteVotingPapers.incrementNextId());
 		List<Party> grParties = getParties();
 		if (grParties != null)
-			for (Party party : grParties)
+			grParties.parallelStream().forEach(party -> {
 				party.addNewIds(allVotingPapers, remoteVotingPapers, user);
+			});
+	}
+
+	@Override
+	protected void addParents() {
+		List<Party> grParties = getParties();
+		if (grParties != null)
+			grParties.parallelStream().forEach(party -> {
+				party.setParent(this);
+				party.addParents();
+			});
 	}
 
 	@Override
