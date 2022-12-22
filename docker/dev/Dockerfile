@@ -11,7 +11,7 @@
 # limitations under the License.
 
 FROM arm64v8/eclipse-temurin:19-jdk
-EXPOSE 8543
+EXPOSE 8180
 RUN apt-get -y update && \
 	apt-get -y install sudo && \
     echo "%adm ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
