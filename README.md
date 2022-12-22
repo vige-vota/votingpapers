@@ -35,7 +35,7 @@ To make the project as an Eclipse project go in the root folder of the project a
 ./gradlew eclipse
 ```
 
-## Docker
+## Docker development
 
 If you need a complete environment you can download docker and import the application through the command:
 ```
@@ -44,5 +44,17 @@ docker pull vige/vota-votingpapers
 To run the image use the command:
 ```
 docker run -d --name vota-votingpapers -p8180:8180 vige/vota-votingpapers
+```
+Then open [http://vota-votingpapers.vige.it:8180/swagger-ui/index.html](http://vota-votingpapers.vige.it:8180/swagger-ui/index.html) to connect to the vote application
+
+## Docker production
+
+If you need a complete environment you can download docker and import the application through the command:
+```
+docker pull vige/vota-votingpapers
+```
+To run the image use the command:
+```
+docker run -d --name vota-votingpapers -p8543:8543 vige/vota-votingpapers
 ```
 Then open [https://vota-votingpapers.vige.it:8543/swagger-ui/index.html](https://vota-votingpapers.vige.it:8543/swagger-ui/index.html) to connect to the vote application
