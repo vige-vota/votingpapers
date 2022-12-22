@@ -10,8 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM arm64v8/eclipse-temurin:18-jdk
-EXPOSE 8180
+FROM arm64v8/eclipse-temurin:19-jdk
+EXPOSE 8543
 RUN apt-get -y update && \
 	apt-get -y install sudo && \
     echo "%adm ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
@@ -32,7 +32,8 @@ RUN cd vota && ./gradlew build -x test
 RUN rm -Rf /home/votinguser/.gradle && \
 	rm /workspace/vota/build/libs/votingpapers-*-plain.jar && \
 	mv /workspace/vota/build/libs/votingpapers-*.jar /workspace/vota.jar && \
+	mv /workspace/vota/docker/prod/volume/cert/application.keystore /workspace/application.keystore && \
 	rm -Rf /workspace/vota
 
-CMD java -jar /workspace/vota.jar --server.port=8180 --spring.profiles.active=docker && \
+CMD java -Djavax.net.ssl.trustStore=/workspace/application.keystore -jar /workspace/vota.jar --server.port=8543 --spring.profiles.active=prod --server.ssl.key-store=/workspace/application.keystore --server.ssl.key-store-password=password --server.ssl.trust-store=./application.keystore --server.ssl.trust-store-password=password && \
 	tail -f /dev/null
