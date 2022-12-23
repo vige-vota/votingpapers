@@ -148,8 +148,7 @@ public class VotingPaperController {
 		if (votingPapers.getVotingPapers().size() == 0) {
 			if (profiles.length == 0 || profiles[0].equals("dev")) {
 				ObjectMapper objectMapper = new ObjectMapper();
-				try {
-					InputStream jsonStream = new FileInputStream("src/test/resources/mock/config-app.json");
+				try (InputStream jsonStream = new FileInputStream("src/test/resources/mock/config-app.json")) {
 					VotingPapers votingPapersFromJson = objectMapper.readValue(jsonStream, VotingPapers.class);
 					votingPapers.setVotingPapers(votingPapersFromJson.getVotingPapers());
 					votingPapers.setState(votingPapersFromJson.getState());

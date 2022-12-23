@@ -32,6 +32,8 @@ RUN cd vota && ./gradlew build -x test
 RUN rm -Rf /home/votinguser/.gradle && \
 	rm /workspace/vota/build/libs/votingpapers-*-plain.jar && \
 	mv /workspace/vota/build/libs/votingpapers-*.jar /workspace/vota.jar && \
+	mkdir -p /workspace/src/test/resources/mock && \
+	mv /workspace/vota/src/test/resources/mock/config-app.json /workspace/src/test/resources/mock/config-app.json && \
 	rm -Rf /workspace/vota
 
 CMD java -jar /workspace/vota.jar --server.port=8180 --spring.profiles.active=dev && \
