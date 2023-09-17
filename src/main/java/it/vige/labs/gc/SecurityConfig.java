@@ -6,23 +6,15 @@
 package it.vige.labs.gc;
 
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory;
-import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Application security configuration.
@@ -31,43 +23,21 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
 	public final static String ADMIN_ROLE = "admin";
 
 	public final static String CITIZEN_ROLE = "citizen";
 
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-		SimpleAuthorityMapper grantedAuthorityMapper = new SimpleAuthorityMapper();
-		grantedAuthorityMapper.setPrefix("ROLE_");
-		grantedAuthorityMapper.setConvertToUpperCase(true);
-		keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(grantedAuthorityMapper);
-		auth.authenticationProvider(keycloakAuthenticationProvider);
-	}
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http, Converter<Jwt, ? extends AbstractAuthenticationToken> jwtAuthenticationConverter) throws Exception {
 
-	@Autowired
-	public KeycloakClientRequestFactory keycloakClientRequestFactory;
+        // @formatter:off
+		http.authorizeHttpRequests(customizer -> customizer.requestMatchers("*").hasAnyRole(ADMIN_ROLE, CITIZEN_ROLE)
+				.anyRequest().permitAll()).csrf(csrf -> csrf.disable());
+        // @formatter:on
 
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-	public KeycloakRestTemplate keycloakRestTemplate() {
-		return new KeycloakRestTemplate(keycloakClientRequestFactory);
-	}
-
-	@Bean
-	@Override
-	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
-		return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
-	}
-
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		super.configure(http);
-		http.authorizeRequests().antMatchers("*").hasAnyRole(ADMIN_ROLE, CITIZEN_ROLE).anyRequest().permitAll().and()
-				.csrf().disable();
-
-	}
+        return http.build();
+    }
 
 }

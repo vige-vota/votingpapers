@@ -1,30 +1,16 @@
 package it.vige.labs.gc;
 
-import static springfox.documentation.builders.PathSelectors.any;
-import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
-import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
-import static springfox.documentation.swagger.web.SecurityConfigurationBuilder.builder;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import springfox.documentation.builders.LoginEndpointBuilder;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.GrantType;
-import springfox.documentation.service.ImplicitGrant;
-import springfox.documentation.service.LoginEndpoint;
-import springfox.documentation.service.OAuth;
-import springfox.documentation.service.SecurityReference;
-import springfox.documentation.service.SecurityScheme;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.SecurityConfiguration;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 public class SwaggerConfig {
@@ -32,49 +18,29 @@ public class SwaggerConfig {
 	@Value("${keycloak.auth-server-url}")
 	private String authServerUrl;
 
-	@Bean
-	public Docket api() {
-		return new Docket(SWAGGER_2).select().apis(basePackage(getClass().getPackageName())).paths(any()).build()
-				.securitySchemes(buildSecurityScheme()).securityContexts(buildSecurityContext());
-	}
+	@Value("${keycloak.realm}")
+	private String realm;
+
+	private static final String OAUTH_SCHEME_NAME = "Voting Papers Auth";
 
 	@Bean
-	public SecurityConfiguration securityConfiguration() {
-
-		Map<String, Object> additionalQueryStringParams = new HashMap<>();
-		additionalQueryStringParams.put("nonce", "123456");
-
-		return builder().clientId("votingPapers").realm("vota-domain").appName("swagger-ui")
-				.additionalQueryStringParams(additionalQueryStringParams).build();
+	public OpenAPI openAPI() {
+		return new OpenAPI().components(new Components().addSecuritySchemes(OAUTH_SCHEME_NAME, createOAuthScheme()))
+				.addSecurityItem(new SecurityRequirement().addList(OAUTH_SCHEME_NAME))
+				.info(new Info().title("Voting Papers").description("Web console").version("1.0"));
 	}
 
-	private List<SecurityContext> buildSecurityContext() {
-		List<SecurityReference> securityReferences = new ArrayList<>();
-
-		securityReferences.add(SecurityReference.builder().reference("oauth2")
-				.scopes(scopes().toArray(new AuthorizationScope[] {})).build());
-
-		SecurityContext context = SecurityContext.builder().securityReferences(securityReferences).build();
-
-		List<SecurityContext> ret = new ArrayList<>();
-		ret.add(context);
-		return ret;
+	private SecurityScheme createOAuthScheme() {
+		OAuthFlows flows = createOAuthFlows();
+		return new SecurityScheme().type(SecurityScheme.Type.OAUTH2).flows(flows);
 	}
 
-	private List<SecurityScheme> buildSecurityScheme() {
-		List<SecurityScheme> lst = new ArrayList<>();
-
-		LoginEndpoint login = new LoginEndpointBuilder()
-				.url(authServerUrl + "/realms/vota-domain/protocol/openid-connect/auth").build();
-
-		List<GrantType> gTypes = new ArrayList<>();
-		gTypes.add(new ImplicitGrant(login, "acces_token"));
-
-		lst.add(new OAuth("oauth2", scopes(), gTypes));
-		return lst;
+	private OAuthFlows createOAuthFlows() {
+		OAuthFlow flow = createAuthorizationCodeFlow();
+		return new OAuthFlows().implicit(flow);
 	}
 
-	private List<AuthorizationScope> scopes() {
-		return new ArrayList<>();
+	private OAuthFlow createAuthorizationCodeFlow() {
+		return new OAuthFlow().authorizationUrl(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/auth");
 	}
 }

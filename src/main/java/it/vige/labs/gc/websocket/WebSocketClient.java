@@ -3,7 +3,6 @@ package it.vige.labs.gc.websocket;
 import static it.vige.labs.gc.JavaAppApplication.BROKER_NAME;
 import static javax.net.ssl.KeyManagerFactory.getDefaultAlgorithm;
 import static javax.net.ssl.KeyManagerFactory.getInstance;
-import static org.apache.tomcat.websocket.Constants.SSL_CONTEXT_PROPERTY;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -59,10 +58,10 @@ public class WebSocketClient {
 	private void connect() throws Exception {
 		if (websocketScheme.equals("wss")) {
 			SSLContext sslContext = sslContext(keystoreFile, keystorePass);
-			standardWebSocketClient.getUserProperties().put(SSL_CONTEXT_PROPERTY, sslContext);
+			SSLContext.setDefault(sslContext);
 		}
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-		stompSession = stompClient.connect(websocketScheme + "://" + serverHost + ":" + serverPort + BROKER_NAME,
+		stompSession = stompClient.connectAsync(websocketScheme + "://" + serverHost + ":" + serverPort + BROKER_NAME,
 				new StompSessionHandlerAdapter() {
 				}).get();
 	}

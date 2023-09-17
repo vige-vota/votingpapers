@@ -7,13 +7,13 @@ To build the application run the command inside the votingpapers folder
 ```
 Start the Java application with the following commands:
 ```
-java -jar build/libs/votingpapers-1.1.2.jar --server.port=8180 --spring.profiles.active=dev
+java -jar build/libs/votingpapers-1.1.3.jar --server.port=8180 --spring.profiles.active=dev
 ```
 and open [http://localhost:8180/swagger-ui/index.html](http://localhost:8180/swagger-ui/index.html) in your browser to connect to the vote application.
 
 If you need to start it on a environment production:
 ```
-java -Djavax.net.ssl.trustStore=./docker/prod/volume/cert/application.keystore -Djavax.net.ssl.trustStorePassword=password -jar build/libs/votingpapers-1.1.2.jar --server.ssl.key-store=./docker/prod/volume/cert/application.keystore --server.ssl.key-store-password=password --server.ssl.trust-store=./docker/prod/volume/cert/application.keystore --server.ssl.trust-store-password=password --server.port=8543 --spring.profiles.active=prod
+java -Djavax.net.ssl.trustStore=./docker/prod/volume/cert/application.keystore -Djavax.net.ssl.trustStorePassword=password -jar build/libs/votingpapers-1.1.3.jar --server.ssl.key-store=./docker/prod/volume/cert/application.keystore --server.ssl.key-store-password=password --server.ssl.trust-store=./docker/prod/volume/cert/application.keystore --server.ssl.trust-store-password=password --server.port=8543 --spring.profiles.active=prod
 ```
 and open [https://vota-votingpapers.vige.it:8543/swagger-ui/index.html](https://vota-votingpapers.vige.it:8543/swagger-ui/index.html) in your browser to connect to the vote application.
 
